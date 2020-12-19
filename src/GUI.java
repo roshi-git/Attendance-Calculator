@@ -4,13 +4,14 @@ import java.awt.*;
 public class GUI extends JFrame {
 
     // X-BOUNDS MACROS
-    int x_label = 50, x_field = 150;
+    int x_label = 50, x_field = 200;
     // DIMENSIONS FOR FRAME
     int width = 500, height = 500;
     // STATE VARIABLES **Volatile because they get
     // used by multiple threads. This ensures a proper
     // busy wait state between different states**
     private volatile int logging_in = 0;    // 0 - WRONG CREDENTIALS, 1 - SUCCESS, 9 - EXIT, -1 - DB ERROR
+    private volatile int logged_in = 0;     // 0 - LOGGED OUT, 1 - LOGGED IN
     private volatile int signing_up = 0;    // 0 - BUSY WAIT, 2 - SIGN-UP COMPLETE/CLOSED, 3 - INVALID EMAIL, 4 - INVALID USERNAME
     private volatile int main_menu_option = 0;  // 0 - BUSY WAIT, 1 - SIGN-UP, 2 - LOG-IN
 
@@ -19,6 +20,9 @@ public class GUI extends JFrame {
 
     public void set_logging_in (int logging_in) { this.logging_in = logging_in; }
     public int get_logging_in () { return logging_in; }
+
+    public void set_logged_in (int logged_in) { this.logged_in = logged_in; }
+    public int get_logged_in () { return logged_in; }
 
     public void set_signing_up (int signing_up) { this.signing_up = signing_up; }
     public int get_signing_up () { return signing_up; }
@@ -82,9 +86,11 @@ public class GUI extends JFrame {
         JTextField username_f = new JTextField();
         JPasswordField pass_f = new JPasswordField();
         JPasswordField re_pass_f = new JPasswordField();
+        JCheckBox user_type = new JCheckBox();
         JLabel name_l = new JLabel("Name:");
         JLabel email_l = new JLabel("E-mail:");
         JLabel username_l = new JLabel("Username:");
+        JLabel user_type_l = new JLabel("Employee Manager?:");
         JLabel pass_l = new JLabel("Password:");
         JLabel re_pass_l = new JLabel("Re-enter password:");
         JLabel messageLabel = new JLabel();
@@ -105,25 +111,34 @@ public class GUI extends JFrame {
         username_f.setBounds(x_field,200,200,25);
         frame.add(username_f);
 
-        pass_l.setBounds(x_label,250,75,25);
+        user_type_l.setBounds(x_label,250,200,25);
+        frame.add(user_type_l);
+        user_type.setBounds(x_field,250,75,25);
+
+        frame.add(user_type);
+
+        pass_l.setBounds(x_label,300,75,25);
         frame.add(pass_l);
-        pass_f.setBounds(x_field,250,200,25);
+        pass_f.setBounds(x_field,300,200,25);
         frame.add(pass_f);
 
-        re_pass_l.setBounds(x_label,300,75,25);
+        re_pass_l.setBounds(x_label,350,150,25);
         frame.add(re_pass_l);
-        re_pass_f.setBounds(x_field,300,200,25);
+        re_pass_f.setBounds(x_field,350,200,25);
         frame.add(re_pass_f);
 
-        sign_up_b.setBounds(150,350,100,25);
+        sign_up_b.setBounds(150,400,100,25);
         sign_up_b.setFocusable(false);
 
-        main_menu_b.setBounds(300,350,100,25);
+        main_menu_b.setBounds(300,400,100,25);
         main_menu_b.setFocusable(false);
 
-        messageLabel.setBounds(50,400,300,35);
+        messageLabel.setBounds(50,450,300,35);
         messageLabel.setFont(new Font(null,Font.BOLD,12));
         frame.add(messageLabel);
+
+        // SET USER TYPE AS EMPLOYEE MANAGER IF CHECKED
+        user_type.addItemListener(ie -> us.SetUType(1));
 
         // DO STUFF WHEN SIGN-UP BUTTON IS PRESSED
         sign_up_b.addActionListener(ae -> {
@@ -160,6 +175,7 @@ public class GUI extends JFrame {
         });
         frame.add(sign_up_b);
 
+        // OPEN MAIN MENU WHEN MAIN MENU IS PRESSED
         main_menu_b.addActionListener(ae -> {
             frame.dispose();
             set_signing_up(2);
@@ -219,6 +235,7 @@ public class GUI extends JFrame {
 
             // SETS logging_in TO 0 IF UNSUCCESSFUL ELSE,
             // SETS IT TO 1 (I.E. THE LOOP IN MAIN BREAKS)
+            // SET LOGGED IN TO 1, TO KEEP USER LOGGED IN
             set_logging_in(ac.login(us));
 
             if( logging_in == 1)
@@ -233,6 +250,74 @@ public class GUI extends JFrame {
             set_logging_in(9);
         });
         frame.add(main_menu_b);
+
+        // DISPLAY THE WINDOW
+        frame.setSize(width,height);
+        frame.setLayout(null);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public void logged_in_menu_emp (User us) {
+
+        // CREATE THE WINDOW
+        JFrame frame = new JFrame();
+
+        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        JButton check_attendance = new JButton("Check your attendance");
+        JButton log_out = new JButton("Log out");
+        JLabel attendance_count = new JLabel();
+
+        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        attendance_count.setBounds(100,100,300,25);
+        attendance_count.setHorizontalAlignment(JLabel.CENTER);
+        frame.add(attendance_count);
+
+        check_attendance.setBounds(100,200,300,25);
+        frame.add(check_attendance);
+
+        log_out.setBounds(200,300,100,25);
+        frame.add(log_out);
+
+        // LOG OUT WHEN Log out BUTTON IS PRESSED
+        log_out.addActionListener(ae -> {
+            logged_in = 2;
+            frame.dispose();
+        });
+
+        // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
+        check_attendance.addActionListener(ae -> {
+            DBHandler db = new DBHandler();
+            attendance_count.setText(String.format("Total attendance: %d", db.get_attendance(us)));
+        });
+
+        // DISPLAY THE WINDOW
+        frame.setSize(width,height);
+        frame.setLayout(null);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public void logged_in_menu_emp_mgr(User us) {
+
+        // CREATE THE WINDOW
+        JFrame frame = new JFrame();
+
+        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        JButton check_attendance = new JButton("Check Attendance of employee");
+        JButton log_out = new JButton("Log out");
+
+        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        check_attendance.setBounds(100,100,300,25);
+        frame.add(check_attendance);
+        log_out.setBounds(200,200,100,25);
+        frame.add(log_out);
+
+        // LOG OUT WHEN Log out BUTTON IS PRESSED
+        log_out.addActionListener(ae -> {
+            logged_in = 2;
+            frame.dispose();
+        });
 
         // DISPLAY THE WINDOW
         frame.setSize(width,height);

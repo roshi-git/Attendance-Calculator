@@ -37,7 +37,7 @@ public class AccountHandler {
         String query = String.format("select exists(select * from userdata where uname='%s' and password='%s')", us.GetUname(), us.GetPass());
         // CHECK IF INPUT USERNAME AND PASSWORD COMBINATION EXISTS IN DATABASE
         exists = db.query_user(query);
-
+        db.get_user_type(us);
         // IF EXISTS IS 0, INCORRECT COMBINATION OF USERNAME AND PASSWORD
         // IF EXISTS IS 1, THERE EXISTS A CORRECT COMBINATION OF BOTH
         if (exists == 0)

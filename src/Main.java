@@ -47,7 +47,12 @@ public class Main {
 
                     if (ec == 1) {
                         System.out.println("Log-in successful!");
-                        ec = LoggedIn(us);
+                        g.set_logged_in(1);
+                        if (us.GetUType() == 1)
+                            g.logged_in_menu_emp_mgr(us);
+                        else
+                            g.logged_in_menu_emp(us);
+                        while (ec == 1) { ec = g.get_logged_in(); }
                     }
 
                     if(ec == 2)

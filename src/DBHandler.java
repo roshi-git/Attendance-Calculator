@@ -15,7 +15,7 @@ public class DBHandler {
             // CONNECT TO DATABASE
             Connection con = dbc.connect();
             // PREPARE SQL QUERY
-            String values = String.format("NULL, '%s', '%s', '%s', '%s'", us.GetName(), us.GetUname(), us.GetMail(), us.GetPass());
+            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d", us.GetName(), us.GetUname(), us.GetMail(), us.GetPass(), us.GetUType());
             PreparedStatement ps = con.prepareStatement(String.format("insert into userdata values (%s)", values));
             // EXECUTE QUERY AND CLOSE THE CONNECTION
             ps.executeUpdate();
@@ -91,5 +91,40 @@ public class DBHandler {
         } catch (Exception e) {
             return 1;
         }
+    }
+
+    // FUNCTION TO SET USER TYPE TO EITHER EMPLOYEE OR MANAGER
+    public void get_user_type (User us) {
+
+        try {
+            Connection con = dbc.connect();
+            String query = String.format("SELECT u_type FROM userdata WHERE uname = '%s'", us.GetUname());
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            rs.next();
+            System.out.printf("User type: %d\n", rs.getByte(1));
+            us.SetUType(rs.getByte(1));
+        } catch (Exception ignored) { }
+
+    }
+
+    public int get_attendance (User us) {
+
+        try {
+            Connection con = dbc.connect();
+
+            String query_1 = String.format("SELECT uid FROM userdata WHERE uname = '%s'", us.GetUname());
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query_1);
+            rs.next();
+
+            String query_2 = String.format("SELECT COUNT(uid) FROM attendance_data WHERE uid = %d", rs.getInt(1));
+            rs = st.executeQuery(query_2);
+            rs.next();
+
+            return rs.getInt(1);
+        } catch (Exception ignored) { }
+
+        return -1;
     }
 }

@@ -2,6 +2,7 @@ public class User {
 
     private String name, uname;
     private String email, pass;
+    private int user_type;
 
     // Getters and Setters for USERNAME
     public String GetUname() {
@@ -34,4 +35,8 @@ public class User {
     public void SetPass(String pass) {
         this.pass = pass;
     }
+
+    // Getters and Setters for USERTYPE
+    public int GetUType () { return user_type; }
+    public void SetUType (int user_type) {this.user_type = user_type; }
 }

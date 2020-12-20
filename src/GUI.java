@@ -258,26 +258,37 @@ public class GUI extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void logged_in_menu_emp (User us) {
+    public void logged_in_menu_emp (User user) {
+
+        DBHandler db = new DBHandler();
 
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
         // CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check your attendance");
+        JButton mark_attendance = new JButton("Mark your attendance");
         JButton log_out = new JButton("Log out");
         JLabel attendance_count = new JLabel();
+        JLabel logged_in_as = new JLabel();
 
         // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
         attendance_count.setBounds(100,100,300,25);
         attendance_count.setHorizontalAlignment(JLabel.CENTER);
         frame.add(attendance_count);
 
-        check_attendance.setBounds(100,200,300,25);
+        check_attendance.setBounds(100,150,300,25);
         frame.add(check_attendance);
+
+        mark_attendance.setBounds(100,200,300,25);
+        frame.add(mark_attendance);
 
         log_out.setBounds(200,300,100,25);
         frame.add(log_out);
+
+        logged_in_as.setBounds(100,350,300,25);
+        logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
+        frame.add(logged_in_as);
 
         // LOG OUT WHEN Log out BUTTON IS PRESSED
         log_out.addActionListener(ae -> {
@@ -287,9 +298,20 @@ public class GUI extends JFrame {
 
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
-            DBHandler db = new DBHandler();
-            attendance_count.setText(String.format("Total attendance: %d", db.get_attendance(us)));
+            String text = String.format("Attendance: %d out of %d", user.GetAttendance(), user.GetTotalAttendance());
+            attendance_count.setText(text);
         });
+
+        // MARK EMPLOYEE AS PRESENT WHEN THIS BUTTON IS PRESSED
+        mark_attendance.addActionListener(ae -> {
+            db.mark_attendance(user);
+            mark_attendance.setEnabled(false);
+        });
+
+        // IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE,
+        // DISABLE mark_attendance BUTTON
+        if (db.check_attendance_today(user) == 1)
+            mark_attendance.setEnabled(false);
 
         // DISPLAY THE WINDOW
         frame.setSize(width,height);
@@ -298,7 +320,7 @@ public class GUI extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void logged_in_menu_emp_mgr(User us) {
+    public void logged_in_menu_emp_mgr (User user) {
 
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
@@ -306,12 +328,18 @@ public class GUI extends JFrame {
         // CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance of employee");
         JButton log_out = new JButton("Log out");
+        JLabel logged_in_as = new JLabel();
 
         // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        check_attendance.setBounds(100,100,300,25);
+        check_attendance.setBounds(100,200,300,25);
         frame.add(check_attendance);
-        log_out.setBounds(200,200,100,25);
+
+        log_out.setBounds(200,300,100,25);
         frame.add(log_out);
+
+        logged_in_as.setBounds(100,350,300,25);
+        logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
+        frame.add(logged_in_as);
 
         // LOG OUT WHEN Log out BUTTON IS PRESSED
         log_out.addActionListener(ae -> {

@@ -5,8 +5,10 @@ public class GUI extends JFrame {
 
     // X-BOUNDS MACROS
     int x_label = 50, x_field = 200;
+
     // DIMENSIONS FOR FRAME
     int width = 500, height = 500;
+
     // STATE VARIABLES **Volatile because they get
     // used by multiple threads. This ensures a proper
     // busy wait state between different states**
@@ -15,15 +17,23 @@ public class GUI extends JFrame {
     private volatile int signing_up = 0;    // 0 - BUSY WAIT, 2 - SIGN-UP COMPLETE/CLOSED, 3 - INVALID EMAIL, 4 - INVALID USERNAME
     private volatile int main_menu_option = 0;  // 0 - BUSY WAIT, 1 - SIGN-UP, 2 - LOG-IN
 
+    /* THESE GETTERS AND SETTERS ARE BEING USED TO
+    SET THE PROGRAM IN BUSY WAIT STATE AS THE GUI
+    IS HANDLED BUY DIFFERENT THREADS. */
+
+    // TO SET AND GET MAIN MENU STATE
     public void set_main_menu_option (int main_menu_option) { this.main_menu_option = main_menu_option; }
     public int get_main_menu_option () { return main_menu_option; }
 
+    // TO SET AND GET LOGGING-IN STATE
     public void set_logging_in (int logging_in) { this.logging_in = logging_in; }
     public int get_logging_in () { return logging_in; }
 
+    // TO SET AND GET LOGGED-IN STATE
     public void set_logged_in (int logged_in) { this.logged_in = logged_in; }
     public int get_logged_in () { return logged_in; }
 
+    // TO SET AND GET SIGNING-UP STATE
     public void set_signing_up (int signing_up) { this.signing_up = signing_up; }
     public int get_signing_up () { return signing_up; }
 
@@ -32,6 +42,7 @@ public class GUI extends JFrame {
 
         // SET PROGRAM TO BUSY WAIT STATE
         set_main_menu_option(0);
+
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
@@ -71,10 +82,11 @@ public class GUI extends JFrame {
     }
 
     // SIGN-UP MENU
-    public void sign_up_menu (User us, AccountHandler ac) {
+    public void sign_up_menu (User user, AccountHandler ac) {
 
         // SET PROGRAM TO BUSY WAIT STATE
         set_signing_up(0);
+
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
@@ -114,7 +126,6 @@ public class GUI extends JFrame {
         user_type_l.setBounds(x_label,250,200,25);
         frame.add(user_type_l);
         user_type.setBounds(x_field,250,75,25);
-
         frame.add(user_type);
 
         pass_l.setBounds(x_label,300,75,25);
@@ -133,12 +144,12 @@ public class GUI extends JFrame {
         main_menu_b.setBounds(300,400,100,25);
         main_menu_b.setFocusable(false);
 
-        messageLabel.setBounds(50,450,300,35);
+        messageLabel.setBounds(50,50,300,35);
         messageLabel.setFont(new Font(null,Font.BOLD,12));
         frame.add(messageLabel);
 
         // SET USER TYPE AS EMPLOYEE MANAGER IF CHECKED
-        user_type.addItemListener(ie -> us.SetUType(1));
+        user_type.addItemListener(ie -> user.SetUType(1));
 
         // DO STUFF WHEN SIGN-UP BUTTON IS PRESSED
         sign_up_b.addActionListener(ae -> {
@@ -151,18 +162,18 @@ public class GUI extends JFrame {
                 messageLabel.setText("Please fill up empty fields.");
             // IF NO EMPTY FIELDS
             else {
-                us.SetName(name_f.getText());
-                us.SetMail(email_f.getText());
-                us.SetUName(username_f.getText());
-                us.SetPass(String.valueOf(pass_f.getPassword()));
+                user.SetName(name_f.getText());
+                user.SetMail(email_f.getText());
+                user.SetUName(username_f.getText());
+                user.SetPass(String.valueOf(pass_f.getPassword()));
                 // CHECK IF RE_ENTERED PASSWORD MATCHES
-                if (!us.GetPass().equals(String.valueOf(re_pass_f.getPassword())))
+                if (!user.GetPass().equals(String.valueOf(re_pass_f.getPassword())))
                     messageLabel.setText("Passwords do not match!");
                 else {
                     // CHECK IF DUPLICATES EXIST IN DATABASE
                     // IF YES, MAIN STAYS STUCK UNTIL NEW EMAIL
                     // AND USERNAMES ARE ENTERED
-                    dup_exists = ac.signup(us);
+                    dup_exists = ac.signup(user);
                     set_signing_up(dup_exists);
                     if( dup_exists == 2)
                         frame.dispose();
@@ -194,6 +205,7 @@ public class GUI extends JFrame {
 
         // SET PROGRAM TO BUSY WAIT STATE
         set_logging_in(0);
+
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
@@ -258,6 +270,7 @@ public class GUI extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    // LOGGED IN MENU FOR EMPLOYEE
     public void logged_in_menu_emp (User user) {
 
         DBHandler db = new DBHandler();
@@ -266,8 +279,8 @@ public class GUI extends JFrame {
         JFrame frame = new JFrame();
 
         // CREATE BUTTONS, LABELS, AND TEXT FIELDS
-        JButton check_attendance = new JButton("Check your attendance");
-        JButton mark_attendance = new JButton("Mark your attendance");
+        JButton check_attendance = new JButton("Check Attendance");
+        JButton mark_attendance = new JButton("Mark Attendance");
         JButton log_out = new JButton("Log out");
         JLabel attendance_count = new JLabel();
         JLabel logged_in_as = new JLabel();
@@ -277,13 +290,13 @@ public class GUI extends JFrame {
         attendance_count.setHorizontalAlignment(JLabel.CENTER);
         frame.add(attendance_count);
 
-        check_attendance.setBounds(100,150,300,25);
+        check_attendance.setBounds(200,150,150,25);
         frame.add(check_attendance);
 
-        mark_attendance.setBounds(100,200,300,25);
+        mark_attendance.setBounds(200,200,150,25);
         frame.add(mark_attendance);
 
-        log_out.setBounds(200,300,100,25);
+        log_out.setBounds(200,300,150,25);
         frame.add(log_out);
 
         logged_in_as.setBounds(100,350,300,25);
@@ -320,21 +333,34 @@ public class GUI extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    // LOGGED IN MENU FOR EMPLOYEE MANAGER
     public void logged_in_menu_emp_mgr (User user) {
 
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
         // CREATE BUTTONS, LABELS, AND TEXT FIELDS
-        JButton check_attendance = new JButton("Check Attendance of employee");
+        JButton check_attendance = new JButton("Check Attendance");
         JButton log_out = new JButton("Log out");
+        JTextField employee_id_f = new JTextField();
+        JLabel attendance_count = new JLabel();
+        JLabel employee_id_l = new JLabel("Employee ID:");
         JLabel logged_in_as = new JLabel();
 
         // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        check_attendance.setBounds(100,200,300,25);
+        attendance_count.setBounds(100,100,300,25);
+        attendance_count.setHorizontalAlignment(JLabel.CENTER);
+        frame.add(attendance_count);
+
+        employee_id_l.setBounds(100,150,100,25);
+        frame.add(employee_id_l);
+        employee_id_f.setBounds(200,150,150,25);
+        frame.add(employee_id_f);
+
+        check_attendance.setBounds(200,200,150,25);
         frame.add(check_attendance);
 
-        log_out.setBounds(200,300,100,25);
+        log_out.setBounds(200,300,150,25);
         frame.add(log_out);
 
         logged_in_as.setBounds(100,350,300,25);
@@ -345,6 +371,16 @@ public class GUI extends JFrame {
         log_out.addActionListener(ae -> {
             logged_in = 2;
             frame.dispose();
+        });
+
+        // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
+        check_attendance.addActionListener(ae -> {
+            DBHandler db = new DBHandler();
+            int uid = Integer.parseInt(employee_id_f.getText());
+            int[] attendance = db.get_attendance(uid);
+
+            String text = String.format("Attendance: %d out of %d", attendance[0], attendance[1]);
+            attendance_count.setText(text);
         });
 
         // DISPLAY THE WINDOW

@@ -18,9 +18,12 @@ public class DBHandler {
         try {
             // CONNECT TO DATABASE
             Connection con = dbc.connect();
+
             // PREPARE SQL QUERY
-            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d", us.GetName(), us.GetUname(), us.GetMail(), us.GetPass(), us.GetUType());
+            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d",us.GetName(), us.GetUname(), us.GetMail(), us.GetPass(), us.GetUType());
+
             PreparedStatement ps = con.prepareStatement(String.format("insert into userdata values (%s)", values));
+
             // EXECUTE QUERY AND CLOSE THE CONNECTION
             ps.executeUpdate();
             con.close();
@@ -52,15 +55,21 @@ public class DBHandler {
         }
     }
 
-    // Function to delete from database
-    public int delete_user(User us) {
+    // TO DELETE USER FROM USER DATABASE
+    public int delete_user(int user_id) {
+
         try {
+            // CONNECT TO DATABASE
             Connection con = dbc.connect();
-            String statement = String.format("DELETE FROM userdata WHERE uname = '%s'", us.GetUname());
+
+            // PREPARE AND EXECUTE SQL QUERY
+            String statement = String.format("DELETE FROM userdata WHERE uid = '%s'", user_id);
             PreparedStatement ps = con.prepareStatement(statement);
             ps.executeUpdate();
 
+            // CLOSE THE CONNECTION
             con.close();
+
             return 0;
 
         } catch (Exception e) {
@@ -90,7 +99,6 @@ public class DBHandler {
         } catch (Exception e) {
             System.out.println("Failed to mark attendance.");
         }
-
     }
 
     // TO CHECK IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE TODAY
@@ -122,37 +130,12 @@ public class DBHandler {
 
     }
 
-    // Function to show users (only for development purposes)
-    public int show_users() {
-
-        try {
-            // CONNECT TO DATABASE AND EXECUTE QUERY
-            Connection con = dbc.connect();
-            String Query = "SELECT * FROM userdata";
-            String name, uname, email, pass;
-            Statement st =con.createStatement();
-            ResultSet rs = st.executeQuery(Query);
-
-            while(rs.next()){
-                int s1 = rs.getInt(1);
-                name = rs.getString(2);
-                uname = rs.getString(3);
-                email = rs.getString(4);
-                pass = rs.getString(5);
-                System.out.println("UID: " + s1 + " NAME: "+ name + " UNAME: " + uname + " E-MAIL: " + email + " PASSWORD: " + pass + "\n");
-            }
-            con.close();
-            return 0;
-
-        } catch (Exception e) {
-            return 1;
-        }
-    }
-
     // FUNCTION TO INITIALIZE USER DATA
     public void get_user_data (User user) {
 
         try {
+            int[] attendance;
+
             // CONNECT TO DATABASE
             Connection con = dbc.connect();
 
@@ -170,20 +153,49 @@ public class DBHandler {
 
             // IF USER IS JUST AN EMPLOYEE, INITIALIZE THEIR ATTENDANCE DATA
             if (user.GetUType() != 1) {
-                String query_2 = String.format("SELECT COUNT(uid) FROM attendance_data WHERE uid = %d AND absent = 0", user.GetUID());
-                rs = st.executeQuery(query_2);
-                rs.next();
-                user.SetAttendance(rs.getInt(1));
-
-                String query_3 = String.format("SELECT COUNT(uid) FROM attendance_data WHERE uid = %d", user.GetUID());
-                rs = st.executeQuery(query_3);
-                rs.next();
-                user.SetTotalAttendance(rs.getInt(1));
+                attendance = get_attendance(user.GetUID());
+                user.SetAttendance(attendance[0]);
+                user.SetTotalAttendance(attendance[1]);
             }
 
             // CLOSE THE CONNECTION
             con.close();
 
         } catch (Exception ignored) { }
+    }
+
+    // FUNCTION TO GET ATTENDANCE DATA OF A USER
+    public int[] get_attendance (int user_id) {
+
+        try {
+            int[] attendance = new int[2];
+
+            // CONNECT TO DATABASE
+            Connection con = dbc.connect();
+
+            // PREPARE AND EXECUTE SQL QUERY
+            Statement st = con.createStatement();
+            ResultSet rs;
+
+            String query_1 = String.format("SELECT COUNT(uid) FROM attendance_data WHERE uid = %d AND absent = 0", user_id);
+            rs = st.executeQuery(query_1);
+            rs.next();
+            attendance[0] = rs.getInt(1);
+
+            String query_2 = String.format("SELECT COUNT(uid) FROM attendance_data WHERE uid = %d", user_id);
+            rs = st.executeQuery(query_2);
+            rs.next();
+            attendance[1] = rs.getInt(1);
+
+            // CLOSE THE CONNECTION
+            con.close();
+
+            // RETURNS AN ARRAY CONTAINING
+            // ATTENDANCE AND TOTAL WORKING DAYS
+            return attendance;
+
+        } catch (Exception ignored) { }
+
+        return null;
     }
 }

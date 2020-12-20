@@ -47,7 +47,7 @@ public class AccountHandler {
         return exists;
     }
 
-    public int delete_account(User us) {
+    public int delete_account(int user_id) {
 
         String option;
 
@@ -57,7 +57,7 @@ public class AccountHandler {
             return 1;
         else {
             DBHandler db = new DBHandler();
-            return db.delete_user(us);
+            return db.delete_user(user_id);
         }
     }
 }

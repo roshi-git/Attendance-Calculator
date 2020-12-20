@@ -23,6 +23,7 @@ public class Main {
 
                 // SIGN-UP
                 case 1 -> {
+                    System.out.println("Signing up..");
 
                     User us = new User();
                     AccountHandler ac = new AccountHandler();
@@ -36,6 +37,7 @@ public class Main {
 
                 // LOG-IN
                 case 2 -> {
+                    System.out.println("Logging in..");
 
                     User us = new User();
                     AccountHandler ac = new AccountHandler();
@@ -52,6 +54,7 @@ public class Main {
                             g.logged_in_menu_emp_mgr(us);
                         else
                             g.logged_in_menu_emp(us);
+                        // BUSY WAIT AT LOGGED IN WINDOW
                         while (ec == 1) { ec = g.get_logged_in(); }
                     }
 
@@ -63,44 +66,6 @@ public class Main {
 
                 // Exception
                 default -> System.out.print("Invalid Input!");
-            }
-        }
-    }
-
-    public static int LoggedIn(User us) {
-        // Do logged in stuff
-        int option, ec = 0;
-        Scanner sc = new Scanner(System.in);
-
-        while (true) {
-            System.out.printf("Logged in as %s%n", us.GetUname());
-            System.out.println("1. Show profile\n2. Account settings\n3. Delete account\n4. Log-out");
-            System.out.print("Select one option: ");
-            option = sc.nextInt();
-
-            switch (option) {
-                case 1 -> {
-                    // Show Profile
-                }
-                case 2 -> {
-                    // Change account related stuff
-                }
-                case 3 -> {
-                    // Delete account
-                    AccountHandler ac = new AccountHandler();
-
-                    ec = ac.delete_account(us);
-                    if(ec == 1)
-                        System.out.println("Account deletion aborted.");
-                    else {
-                        System.out.println("Account successfully deleted.");
-                        return 2;
-                    }
-                }
-                case 4 -> {
-                    System.out.println("Logging out...");
-                    return 2;
-                }
             }
         }
     }

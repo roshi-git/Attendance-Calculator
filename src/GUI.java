@@ -341,16 +341,17 @@ public class GUI extends JFrame {
 
         // CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance");
+        JButton remove_employee = new JButton("Remove Employee");
         JButton log_out = new JButton("Log out");
         JTextField employee_id_f = new JTextField();
-        JLabel attendance_count = new JLabel();
+        JLabel message_label = new JLabel();
         JLabel employee_id_l = new JLabel("Employee ID:");
         JLabel logged_in_as = new JLabel();
 
         // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        attendance_count.setBounds(100,100,300,25);
-        attendance_count.setHorizontalAlignment(JLabel.CENTER);
-        frame.add(attendance_count);
+        message_label.setBounds(100,100,300,25);
+        message_label.setHorizontalAlignment(JLabel.CENTER);
+        frame.add(message_label);
 
         employee_id_l.setBounds(100,150,100,25);
         frame.add(employee_id_l);
@@ -359,6 +360,9 @@ public class GUI extends JFrame {
 
         check_attendance.setBounds(200,200,150,25);
         frame.add(check_attendance);
+
+        remove_employee.setBounds(200,250,150,25);
+        frame.add(remove_employee);
 
         log_out.setBounds(200,300,150,25);
         frame.add(log_out);
@@ -380,7 +384,28 @@ public class GUI extends JFrame {
             int[] attendance = db.get_attendance(uid);
 
             String text = String.format("Attendance: %d out of %d", attendance[0], attendance[1]);
-            attendance_count.setText(text);
+            message_label.setText(text);
+        });
+
+        // REMOVE EMPLOYEE WHEN CLICKED
+        remove_employee.addActionListener(ae -> {
+            DBHandler db = new DBHandler();
+            User employee = new User();
+            int uid = Integer.parseInt(employee_id_f.getText());
+            int delete_status;
+
+            employee.SetUID(uid);
+            db.get_emp_data(employee);
+
+            if (employee.GetUType() == 1)
+                message_label.setText("You can not remove another admin!");
+            else {
+                delete_status = db.delete_user(uid);
+                if (delete_status == 0)
+                    message_label.setText(String.format("Employee %s has been removed.", employee.GetName()));
+                else
+                    message_label.setText(String.format("Could not remove %s.", employee.GetName()));
+            }
         });
 
         // DISPLAY THE WINDOW

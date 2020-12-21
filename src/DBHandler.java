@@ -63,8 +63,12 @@ public class DBHandler {
             Connection con = dbc.connect();
 
             // PREPARE AND EXECUTE SQL QUERY
-            String statement = String.format("DELETE FROM userdata WHERE uid = '%s'", user_id);
-            PreparedStatement ps = con.prepareStatement(statement);
+            String query_1 = String.format("DELETE FROM userdata WHERE uid = '%s'", user_id);
+            PreparedStatement ps = con.prepareStatement(query_1);
+            ps.executeUpdate();
+
+            String query_2 = String.format("DELETE FROM attendance_data WHERE uid = '%s'", user_id);
+            ps = con.prepareStatement(query_2);
             ps.executeUpdate();
 
             // CLOSE THE CONNECTION
@@ -160,6 +164,28 @@ public class DBHandler {
 
             // CLOSE THE CONNECTION
             con.close();
+
+        } catch (Exception ignored) { }
+    }
+
+    // THIS FUNCTION ONLY GETS THE EMPLOYEE'S NAME AND E-MAIL
+    public void get_emp_data (User user) {
+
+        try {
+            // CONNECT TO DATABASE
+            Connection con = dbc.connect();
+
+            // PREPARE AND EXECUTE SQL QUERY
+            String query = String.format("SELECT * FROM userdata WHERE uid = '%s'", user.GetUID());
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            rs.next();
+
+            // INITIALIZE EMPLOYEE DATA
+            user.SetUID(rs.getInt(1));
+            user.SetName(rs.getString(2));
+            user.SetMail(rs.getString(4));
+            user.SetUType(rs.getInt(6));
 
         } catch (Exception ignored) { }
     }

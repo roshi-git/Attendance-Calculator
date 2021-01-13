@@ -46,18 +46,4 @@ public class AccountHandler {
 
         return exists;
     }
-
-    public int delete_account(int user_id) {
-
-        String option;
-
-        System.out.println("Are you sure you want to delete your account? (Y/N): ");
-        option = sc.next().toUpperCase();
-        if (option.equals("N"))
-            return 1;
-        else {
-            DBHandler db = new DBHandler();
-            return db.delete_user(user_id);
-        }
-    }
 }

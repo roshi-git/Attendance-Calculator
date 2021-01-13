@@ -5,6 +5,8 @@ import java.sql.Statement;
 
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // This class handles transaction with the database
 public class DBHandler {
@@ -221,6 +223,35 @@ public class DBHandler {
             return attendance;
 
         } catch (Exception ignored) { }
+
+        return null;
+    }
+
+    // TO GET LIST OF ALL EMPLOYEES
+    public List<String> get_emp_list () {
+
+        List<String> emp_list = new ArrayList<>();
+
+        try {
+            // CONNECT TO DATABASE
+            Connection con = dbc.connect();
+
+            // PREPARE AND EXECUTE SQL QUERY
+            String query = "SELECT * FROM userdata WHERE u_type = 0";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+
+            while (rs.next()) {
+                String emp_data = String.format("%d, %s, %s", rs.getInt(1), rs.getString(2), rs.getString(4));
+                emp_list.add(emp_data);
+                rs.next();
+            }
+
+            return emp_list;
+
+        } catch (Exception e) {
+            System.out.println("Could not fetch employee list.");
+        }
 
         return null;
     }

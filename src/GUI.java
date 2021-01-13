@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GUI extends JFrame {
 
@@ -235,8 +237,8 @@ public class GUI extends JFrame {
         main_menu_b.setBounds(300,200,100,25);
         main_menu_b.setFocusable(false);
 
-        messageLabel.setBounds(50,250,250,35);
-        messageLabel.setFont(new Font(null,Font.BOLD,18));
+        messageLabel.setBounds(50,250,300,35);
+        messageLabel.setFont(new Font(null,Font.BOLD,13));
         frame.add(messageLabel);
 
         // DO STUFF WHEN BUTTONS ARE PRESSED
@@ -342,6 +344,7 @@ public class GUI extends JFrame {
         // CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance");
         JButton remove_employee = new JButton("Remove Employee");
+        JButton show_emp_list = new JButton("Employee List");
         JButton log_out = new JButton("Log out");
         JTextField employee_id_f = new JTextField();
         JLabel message_label = new JLabel();
@@ -361,13 +364,16 @@ public class GUI extends JFrame {
         check_attendance.setBounds(200,200,150,25);
         frame.add(check_attendance);
 
-        remove_employee.setBounds(200,250,150,25);
+        show_emp_list.setBounds(200,250,150,25);
+        frame.add(show_emp_list);
+
+        remove_employee.setBounds(200,300,150,25);
         frame.add(remove_employee);
 
-        log_out.setBounds(200,300,150,25);
+        log_out.setBounds(200,350,150,25);
         frame.add(log_out);
 
-        logged_in_as.setBounds(100,350,300,25);
+        logged_in_as.setBounds(100,400,300,25);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
         frame.add(logged_in_as);
 
@@ -385,6 +391,12 @@ public class GUI extends JFrame {
 
             String text = String.format("Attendance: %d out of %d", attendance[0], attendance[1]);
             message_label.setText(text);
+        });
+
+        // SHOW EMPLOYEE LIST WHEN CLICKED
+        show_emp_list.addActionListener(ae -> {
+            GUI g = new GUI();
+            g.emp_data_list();
         });
 
         // REMOVE EMPLOYEE WHEN CLICKED
@@ -413,5 +425,29 @@ public class GUI extends JFrame {
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    // LIST OF ALL EMPLOYEES AND THEIR DATA
+    public void emp_data_list () {
+
+        DBHandler db = new DBHandler();
+
+        List<String> emp_list = db.get_emp_list();
+        final JList<String> list = new JList<>(emp_list.toArray(new String[emp_list.size()]));
+
+        // CREATE THE WINDOW
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel(new BorderLayout());
+        JScrollPane scroll_pane = new JScrollPane();
+
+        scroll_pane.setViewportView(list);
+        list.setLayoutOrientation(JList.VERTICAL);
+        panel.add(scroll_pane);
+        frame.add(panel);
+
+        // DISPLAY THE WINDOW
+        frame.setSize(width,height);
+        frame.setLayout(null);
+        frame.setVisible(true);
     }
 }

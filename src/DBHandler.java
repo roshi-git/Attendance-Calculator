@@ -119,10 +119,12 @@ public class DBHandler {
             LocalDateTime now = LocalDateTime.now();
 
             // PREPARE AND EXECUTE SQL QUERY
-            String query_1 = String.format("SELECT date FROM attendance_data WHERE uid = %d", user.GetUID());
+            String query_1 = String.format("SELECT max(date) FROM attendance_data WHERE uid = %d", user.GetUID());
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query_1);
             rs.next();
+
+            System.out.println("Last attended on: " + rs.getString(1));
 
             // IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE TODAY
             if (rs.getString(1).equals(dtf.format(now)))

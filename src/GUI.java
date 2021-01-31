@@ -23,6 +23,8 @@ public class GUI extends JFrame {
     SET THE PROGRAM IN BUSY WAIT STATE AS THE GUI
     IS HANDLED BUY DIFFERENT THREADS. */
 
+    //region GETTERS AND SETTERS
+
     // TO SET AND GET MAIN MENU STATE
     public void set_main_menu_option (int main_menu_option) { this.main_menu_option = main_menu_option; }
     public int get_main_menu_option () { return main_menu_option; }
@@ -39,47 +41,59 @@ public class GUI extends JFrame {
     public void set_signing_up (int signing_up) { this.signing_up = signing_up; }
     public int get_signing_up () { return signing_up; }
 
+    //endregion
+
+    //region MENUS
+
     // MAIN MENU
     public void main_menu () {
-
-        // SET PROGRAM TO BUSY WAIT STATE
-        set_main_menu_option(0);
 
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
-        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton sign_up_b = new JButton("Sign-up");
         JButton log_in_b = new JButton("Log-in");
         JButton exit_b = new JButton("Exit");
+        //endregion
 
-        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
         sign_up_b.setBounds(150,100,200,50);
         frame.add(sign_up_b);
         log_in_b.setBounds(150,200,200,50);
         frame.add(log_in_b);
         exit_b.setBounds(150,300,200,50);
         frame.add(exit_b);
+        //endregion
 
-        // DO STUFF WHEN BUTTONS ARE PRESSED
+        //region BUTTONS
+        // LOAD SIGN UP MENU WHEN Sign-Up BUTTON IS PRESSED
         sign_up_b.addActionListener(ae -> {
-            set_main_menu_option(1);
             frame.dispose();
+            User user = new User();
+            AccountHandler ac = new AccountHandler();
+            sign_up_menu(user, ac);
         });
+        // LOAD SIGN UP MENU WHEN Sign-Up BUTTON IS PRESSED
         log_in_b.addActionListener(ae -> {
-            set_main_menu_option(2);
             frame.dispose();
+            User user = new User();
+            AccountHandler ac = new AccountHandler();
+            login_menu(user, ac);
         });
+        // EXIT WHEN Exit BUTTON IS PRESSED
         exit_b.addActionListener(ae -> {
             frame.dispose();
             System.exit(0);
         });
+        //endregion
 
-        // DISPLAY THE WINDOW
+        //region DISPLAY THE WINDOW
         frame.setSize(width,height);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //endregion
 
     }
 
@@ -92,7 +106,7 @@ public class GUI extends JFrame {
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
-        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton sign_up_b = new JButton("Sign-up");
         JButton main_menu_b = new JButton("Main Menu");
         JTextField name_f = new JTextField();
@@ -108,8 +122,9 @@ public class GUI extends JFrame {
         JLabel pass_l = new JLabel("Password:");
         JLabel re_pass_l = new JLabel("Re-enter password:");
         JLabel messageLabel = new JLabel();
+        //endregion
 
-        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
         name_l.setBounds(x_label,100,75,25);
         frame.add(name_l);
         name_f.setBounds(x_field,100,200,25);
@@ -149,10 +164,11 @@ public class GUI extends JFrame {
         messageLabel.setBounds(50,50,300,35);
         messageLabel.setFont(new Font(null,Font.BOLD,12));
         frame.add(messageLabel);
+        //endregion
 
+        //region BUTTONS
         // SET USER TYPE AS EMPLOYEE MANAGER IF CHECKED
         user_type.addItemListener(ie -> user.SetUType(1));
-
         // DO STUFF WHEN SIGN-UP BUTTON IS PRESSED
         sign_up_b.addActionListener(ae -> {
             int dup_exists = 1;
@@ -177,8 +193,11 @@ public class GUI extends JFrame {
                     // AND USERNAMES ARE ENTERED
                     dup_exists = ac.signup(user);
                     set_signing_up(dup_exists);
-                    if( dup_exists == 2)
+                    if( dup_exists == 2) {
+                        System.out.println("Sign-up successful!");
                         frame.dispose();
+                        main_menu();
+                    }
                     else if (dup_exists == 3)
                         messageLabel.setText("E-mail is already being used!");
                     else if (dup_exists == 4)
@@ -187,23 +206,25 @@ public class GUI extends JFrame {
             }
         });
         frame.add(sign_up_b);
-
         // OPEN MAIN MENU WHEN MAIN MENU IS PRESSED
         main_menu_b.addActionListener(ae -> {
             frame.dispose();
-            set_signing_up(2);
+            main_menu();
         });
         frame.add(main_menu_b);
+        //endregion
 
-        // DISPLAY THE WINDOW
+        //region DISPLAY THE WINDOW
         frame.setSize(width,height);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //endregion
+
     }
 
     // LOG-IN MENU
-    public void login_menu(User us, AccountHandler ac) {
+    public void login_menu(User user, AccountHandler ac) {
 
         // SET PROGRAM TO BUSY WAIT STATE
         set_logging_in(0);
@@ -211,7 +232,7 @@ public class GUI extends JFrame {
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
-        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton loginButton = new JButton("Log-in");
         JButton main_menu_b = new JButton("Main Menu");
         JTextField username_f = new JTextField();
@@ -219,8 +240,9 @@ public class GUI extends JFrame {
         JLabel username_l = new JLabel("Username:");
         JLabel pass_l = new JLabel("Password:");
         JLabel messageLabel = new JLabel();
+        //endregion
 
-        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
         username_l.setBounds(x_label,100,75,25);
         frame.add(username_l);
         username_f.setBounds(x_field,100,200,25);
@@ -240,36 +262,47 @@ public class GUI extends JFrame {
         messageLabel.setBounds(50,250,300,35);
         messageLabel.setFont(new Font(null,Font.BOLD,13));
         frame.add(messageLabel);
+        //endregion
 
-        // DO STUFF WHEN BUTTONS ARE PRESSED
+        //region BUTTONS
+        // LOG-IN WHEN Log-in BUTTON IS PRESSED
         loginButton.addActionListener(ae -> {
 
-            us.SetUName(username_f.getText());
-            us.SetPass(String.valueOf(pass_f.getPassword()));
+            user.SetUName(username_f.getText());
+            user.SetPass(String.valueOf(pass_f.getPassword()));
 
             // SETS logging_in TO 0 IF UNSUCCESSFUL ELSE,
             // SETS IT TO 1 (I.E. THE LOOP IN MAIN BREAKS)
             // SET LOGGED IN TO 1, TO KEEP USER LOGGED IN
-            set_logging_in(ac.login(us));
+            set_logging_in(ac.login(user));
 
-            if( logging_in == 1)
+            if( logging_in == 1) {
+                System.out.println("Log-in successful!");
                 frame.dispose();
+                if (user.GetUType() == 1)
+                    logged_in_menu_emp_mgr(user);
+                else
+                    logged_in_menu_emp(user);
+            }
             else
                 messageLabel.setText("Incorrect username or password.");
         });
         frame.add(loginButton);
-
+        // GO TO MAIN MENU WHEN Main Menu BUTTON IS PRESSED
         main_menu_b.addActionListener(ae -> {
             frame.dispose();
-            set_logging_in(9);
+            main_menu();
         });
         frame.add(main_menu_b);
+        //endregion
 
-        // DISPLAY THE WINDOW
+        //region DISPLAY THE WINDOW
         frame.setSize(width,height);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //endregion
+
     }
 
     // LOGGED IN MENU FOR EMPLOYEE
@@ -280,14 +313,15 @@ public class GUI extends JFrame {
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
-        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance");
         JButton mark_attendance = new JButton("Mark Attendance");
         JButton log_out = new JButton("Log out");
         JLabel attendance_count = new JLabel();
         JLabel logged_in_as = new JLabel();
+        //endregion
 
-        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
         attendance_count.setBounds(100,100,300,25);
         attendance_count.setHorizontalAlignment(JLabel.CENTER);
         frame.add(attendance_count);
@@ -304,35 +338,39 @@ public class GUI extends JFrame {
         logged_in_as.setBounds(100,350,300,25);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
         frame.add(logged_in_as);
+        //endregion
 
+        //region BUTTONS
         // LOG OUT WHEN Log out BUTTON IS PRESSED
         log_out.addActionListener(ae -> {
             logged_in = 2;
             frame.dispose();
+            main_menu();
         });
-
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
+            db.get_user_data(user);
             String text = String.format("Attendance: %d out of %d", user.GetAttendance(), user.GetTotalAttendance());
             attendance_count.setText(text);
         });
-
         // MARK EMPLOYEE AS PRESENT WHEN THIS BUTTON IS PRESSED
         mark_attendance.addActionListener(ae -> {
             db.mark_attendance(user);
             mark_attendance.setEnabled(false);
         });
-
         // IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE,
         // DISABLE mark_attendance BUTTON
         if (db.check_attendance_today(user) == 1)
             mark_attendance.setEnabled(false);
+        //endregion
 
-        // DISPLAY THE WINDOW
+        //region DISPLAY THE WINDOW
         frame.setSize(width,height);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //endregion
+
     }
 
     // LOGGED IN MENU FOR EMPLOYEE MANAGER
@@ -341,7 +379,7 @@ public class GUI extends JFrame {
         // CREATE THE WINDOW
         JFrame frame = new JFrame();
 
-        // CREATE BUTTONS, LABELS, AND TEXT FIELDS
+        //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance");
         JButton remove_employee = new JButton("Remove Employee");
         JButton show_emp_list = new JButton("Employee List");
@@ -350,8 +388,9 @@ public class GUI extends JFrame {
         JLabel message_label = new JLabel();
         JLabel employee_id_l = new JLabel("Employee ID:");
         JLabel logged_in_as = new JLabel();
+        //endregion
 
-        // ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
         message_label.setBounds(100,100,300,25);
         message_label.setHorizontalAlignment(JLabel.CENTER);
         frame.add(message_label);
@@ -376,13 +415,15 @@ public class GUI extends JFrame {
         logged_in_as.setBounds(100,400,300,25);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
         frame.add(logged_in_as);
+        //endregion
 
+        //region BUTTONS
         // LOG OUT WHEN Log out BUTTON IS PRESSED
         log_out.addActionListener(ae -> {
             logged_in = 2;
             frame.dispose();
+            main_menu();
         });
-
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
             DBHandler db = new DBHandler();
@@ -392,13 +433,11 @@ public class GUI extends JFrame {
             String text = String.format("Attendance: %d out of %d", attendance[0], attendance[1]);
             message_label.setText(text);
         });
-
         // SHOW EMPLOYEE LIST WHEN CLICKED
         show_emp_list.addActionListener(ae -> {
             GUI g = new GUI();
             g.emp_data_list();
         });
-
         // REMOVE EMPLOYEE WHEN CLICKED
         remove_employee.addActionListener(ae -> {
             DBHandler db = new DBHandler();
@@ -419,12 +458,15 @@ public class GUI extends JFrame {
                     message_label.setText(String.format("Could not remove %s.", employee.GetName()));
             }
         });
+        //endregion
 
-        // DISPLAY THE WINDOW
+        //region DISPLAY THE WINDOW
         frame.setSize(width,height);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //endregion
+
     }
 
     // LIST OF ALL EMPLOYEES AND THEIR DATA
@@ -450,4 +492,6 @@ public class GUI extends JFrame {
         frame.setLayout(null);
         frame.setVisible(true);
     }
+
+    //endregion
 }

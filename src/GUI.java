@@ -1,5 +1,7 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class GUI extends JFrame {
 
@@ -15,12 +17,14 @@ public class GUI extends JFrame {
     JPanel log_in_menu = new JPanel();
     JPanel emp_log_in_menu = new JPanel();
     JPanel emg_log_in_menu = new JPanel();
+    JPanel emp_list_menu = new JPanel();
+    JPanel manage_menu = new JPanel();
     CardLayout cl = new CardLayout();
 
     // X-BOUNDS MACROS
     int x_label = 50, x_field = 200;
     // DIMENSIONS FOR FRAME
-    int width = 500, height = 500;
+    int width = 500, height = 600;
 
     //endregion
 
@@ -35,6 +39,8 @@ public class GUI extends JFrame {
         main_panel.add(log_in_menu, "3");
         main_panel.add(emp_log_in_menu, "4");
         main_panel.add(emg_log_in_menu, "5");
+        main_panel.add(emp_list_menu, "6");
+        main_panel.add(manage_menu,"7");
 
         cl.show(main_panel, "1");
 
@@ -343,7 +349,8 @@ public class GUI extends JFrame {
 
         //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance");
-        JButton remove_employee = new JButton("Remove Employee");
+        JButton predict_presence = new JButton("Predict Presence");
+        JButton manage_employee = new JButton("Manage Employee");
         JButton show_emp_list = new JButton("Employee List");
         JButton log_out = new JButton("Log out");
         JTextField employee_id_f = new JTextField();
@@ -353,23 +360,26 @@ public class GUI extends JFrame {
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        message_label.setBounds(100,100,300,25);
+        message_label.setBounds(100,50,300,25);
         message_label.setHorizontalAlignment(JLabel.CENTER);
         panel.add(message_label);
 
-        employee_id_l.setBounds(100,150,100,25);
+        employee_id_l.setBounds(100,100,100,25);
         panel.add(employee_id_l);
-        employee_id_f.setBounds(200,150,150,25);
+        employee_id_f.setBounds(200,100,150,25);
         panel.add(employee_id_f);
 
-        check_attendance.setBounds(200,200,150,25);
+        check_attendance.setBounds(200,150,150,25);
         panel.add(check_attendance);
+
+        predict_presence.setBounds(200,200,150,25);
+        panel.add(predict_presence);
 
         show_emp_list.setBounds(200,250,150,25);
         panel.add(show_emp_list);
 
-        remove_employee.setBounds(200,300,150,25);
-        panel.add(remove_employee);
+        manage_employee.setBounds(200,300,150,25);
+        panel.add(manage_employee);
 
         log_out.setBounds(200,350,150,25);
         panel.add(log_out);
@@ -381,9 +391,7 @@ public class GUI extends JFrame {
 
         //region BUTTONS
         // LOG OUT WHEN Log out BUTTON IS PRESSED
-        log_out.addActionListener(ae -> {
-            main_menu(main_menu);
-        });
+        log_out.addActionListener(ae -> main_menu(main_menu));
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
             DBHandler db = new DBHandler();
@@ -394,32 +402,211 @@ public class GUI extends JFrame {
             message_label.setText(text);
         });
         // SHOW EMPLOYEE LIST WHEN CLICKED
-        show_emp_list.addActionListener(ae -> {
-            GUI g = new GUI();
-        });
+        show_emp_list.addActionListener(ae -> emp_list_menu(user, emp_list_menu));
         // REMOVE EMPLOYEE WHEN CLICKED
-        remove_employee.addActionListener(ae -> {
-            DBHandler db = new DBHandler();
-            User employee = new User();
-            int uid = Integer.parseInt(employee_id_f.getText());
-            int delete_status;
-
-            employee.SetUID(uid);
-            db.get_emp_data(employee);
-
-            if (employee.GetUType() == 1)
-                message_label.setText("You can not remove another admin!");
-            else {
-                delete_status = db.delete_user(uid);
-                if (delete_status == 0)
-                    message_label.setText(String.format("Employee %s has been removed.", employee.GetName()));
-                else
-                    message_label.setText(String.format("Could not remove %s.", employee.GetName()));
-            }
+        manage_employee.addActionListener(ae -> {
+            manage_menu(user, manage_menu);
         });
         //endregion
 
         panel.setLayout(null);
+    }
+
+    // EMPLOYEE LIST MENU
+    public void emp_list_menu (User user, JPanel panel) {
+
+        // SHOW PANEL 6 FROM THE CARD LAYOUT
+        cl.show(main_panel, "6");
+
+        JPanel sub_panel = new JPanel();
+        JButton back = new JButton("Back");
+
+        //region TABLE CREATION
+        // CREATE A DYNAMIC TABLE
+        DefaultTableModel tableModel = new DefaultTableModel();
+        JTable table = new JTable(tableModel);
+
+        DBHandler db = new DBHandler();
+        List<Employee> emp_list = db.get_emp_list();
+
+        // ADD COLUMNS TO THE TABLE
+        tableModel.addColumn("Employee ID");
+        tableModel.addColumn("Managed By");
+        tableModel.addColumn("Name");
+        tableModel.addColumn("E-mail ID");
+
+        // ADD ROWS TO TABLE VIEW OF EMPLOYEE DATA
+        for (Employee emp : emp_list) {
+            String[] emp_data = {Integer.toString(emp.user_id),
+                                Integer.toString(emp.managed_by),
+                                emp.name, emp.email};
+
+            tableModel.insertRow(0, emp_data);
+        }
+
+        // RESIZE, ORIENT, AND ADD TABLE TO SUB-PANEL
+        table.setPreferredScrollableViewportSize(new Dimension(400, 250));
+        table.setBounds(50, 0, 400, 250);
+        sub_panel.add(new JScrollPane(table));
+        //endregion
+
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        back.setBounds(200,350,100,25);
+        panel.add(back);
+
+        sub_panel.setBounds(0, 0, 500, 300);
+        panel.add(sub_panel);
+        //endregion
+
+        // GO BACK TO EMPLOYEE MANAGER LOG-IN MENU WHEN CLICKED
+        back.addActionListener( ae -> logged_in_menu_emp_mgr(user, emg_log_in_menu));
+
+        panel.setLayout(null);
+    }
+
+    // EMPLOYEES UNDER SUPERVISION LIST
+    public void manage_menu (User user, JPanel panel) {
+
+        // SHOW PANEL 7 FROM THE CARD LAYOUT
+        cl.show(main_panel, "7");
+
+        JPanel sub_panel = new JPanel();
+        JButton back = new JButton("Back");
+        JButton manage = new JButton("Manage Employee");
+        JButton un_manage = new JButton("Un-manage Employee");
+        JButton remove = new JButton("Remove Employee");
+        JLabel message_label = new JLabel();
+
+        //region TABLE CREATION
+        // CREATE A DYNAMIC TABLE
+        DefaultTableModel tableModel = new DefaultTableModel();
+        JTable table = new JTable(tableModel);
+
+        DBHandler db = new DBHandler();
+        List<Employee> emp_list = db.get_emp_list();
+
+        // ADD COLUMNS TO THE TABLE
+        tableModel.addColumn("Employee ID");
+        tableModel.addColumn("Managed By");
+        tableModel.addColumn("Name");
+        tableModel.addColumn("E-mail ID");
+
+        // ADD ROWS TO TABLE VIEW OF EMPLOYEE DATA
+        for (Employee emp : emp_list) {
+            String[] emp_data = {Integer.toString(emp.user_id),
+                                Integer.toString(emp.managed_by),
+                                emp.name, emp.email};
+
+            tableModel.insertRow(0, emp_data);
+        }
+
+        // RESIZE, ORIENT, AND ADD TABLE TO SUB-PANEL
+        table.setPreferredScrollableViewportSize(new Dimension(400, 250));
+        table.setBounds(50, 0, 400, 250);
+        sub_panel.add(new JScrollPane(table));
+        //endregion
+
+        //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
+        sub_panel.setBounds(0, 0, 500, 300);
+        panel.add(sub_panel);
+
+        manage.setBounds(100,300,150,25);
+        panel.add(manage);
+
+        un_manage.setBounds(300,300,150,25);
+        panel.add(un_manage);
+
+        remove.setBounds(200,350,150,25);
+        panel.add(remove);
+
+        back.setBounds(200,400,150,25);
+        panel.add(back);
+
+        message_label.setBounds(200,450,150,25);
+        panel.add(message_label);
+        //endregion
+
+        //region BUTTONS
+        // MANAGE SELECTED EMPLOYEES
+        manage.addActionListener( ae -> {
+
+            int emp_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
+            int manager_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 1).toString());
+
+            // IF EMPLOYEE IS BEING MANAGED ALREADY
+            if (manager_id != 0)
+                message_label.setText("Employee is being managed already.");
+            // IF EMPLOYEE IS NOT BEING MANAGED
+            else {
+                if (emp_id == user.GetUID())
+                    message_label.setText("You cannot manage yourself.");
+                else {
+                    db.ch_manager(emp_id, user.GetUID());
+                    tableModel.setValueAt(user.GetUID(), table.getSelectedRow(), 1);
+                    message_label.setText("Success");
+                }
+            }
+        });
+
+        // UN-MANAGE SELECTED EMPLOYEE
+        un_manage.addActionListener( ae -> {
+
+            int emp_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
+            int manager_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 1).toString());
+
+            // IF EMPLOYEE IS BEING MANAGED ALREADY
+            if (manager_id != 0) {
+                // IF YOU ARE MANAGING THE EMPLOYEE
+                if (manager_id == user.GetUID()) {
+                    db.ch_manager(emp_id, 0);
+                    tableModel.setValueAt(0, table.getSelectedRow(), 1);
+                    message_label.setText("Success");
+                }
+                else
+                    message_label.setText("Invalid operation!");
+            }
+
+            // IF EMPLOYEE IS NOT BEING MANAGED
+            else
+                message_label.setText("Invalid operation!");
+        });
+
+        // REMOVE SELECTED EMPLOYEES
+        remove.addActionListener( ae -> {
+
+            int emp_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
+            int manager_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 1).toString());
+
+            // IF EMPLOYEE IS BEING MANAGED
+            if (manager_id != 0) {
+                // IF YOU ARE MANAGING THE SELECTED EMPLOYEE
+                if (manager_id == user.GetUID()) {
+                    db.delete_user(emp_id);
+                    tableModel.removeRow(table.getSelectedRow());
+                    message_label.setText("Successfully removed employee");
+                }
+                // IF YOU ARE NOT MANAGING THE SELECTED EMPLOYEE
+                else
+                    message_label.setText("You cannot remove this employee.");
+            }
+            // IF EMPLOYEE IS NOT BEING MANAGED
+            else {
+                if (emp_id == user.GetUID())
+                    message_label.setText("You cannot remove yourself.");
+                else {
+                    db.delete_user(emp_id);
+                    tableModel.removeRow(table.getSelectedRow());
+                    message_label.setText("Successfully removed employee.");
+                }
+            }
+        });
+
+        // GO BACK TO EMPLOYEE MANAGER MENU
+        back.addActionListener( ae -> logged_in_menu_emp_mgr(user, emg_log_in_menu));
+        //endregion
+
+        panel.setLayout(null);
+
     }
 
     //endregion

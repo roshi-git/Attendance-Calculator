@@ -1,10 +1,13 @@
 public class User {
 
+    //region VARIABLES
     private String name, uname;
     private String email, pass;
     private int user_id, user_type;
     private int attendance, total_attendance;
+    //endregion
 
+    //region GETTERS AND SETTERS
     // Getters and Setters for USERNAME
     public String GetUname() {
         return uname;
@@ -52,4 +55,6 @@ public class User {
     // Getters and Setters for TOTAL ATTENDANCE
     public int GetTotalAttendance () { return total_attendance; }
     public void SetTotalAttendance (int total_attendance) {this.total_attendance = total_attendance; }
+    //endregion
+
 }

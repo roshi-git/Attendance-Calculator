@@ -22,9 +22,9 @@ public class DBHandler {
             Connection con = dbc.connect();
 
             // PREPARE SQL QUERY
-            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d",us.GetName(), us.GetUname(), us.GetMail(), us.GetPass(), us.GetUType());
+            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d, %d", us.GetName(), us.GetUname(), us.GetMail(), us.GetPass(), us.GetUType(), 0);
 
-            PreparedStatement ps = con.prepareStatement(String.format("insert into userdata values (%s)", values));
+            PreparedStatement ps = con.prepareStatement(String.format("INSERT INTO userdata VALUES (%s)", values));
 
             // EXECUTE QUERY AND CLOSE THE CONNECTION
             ps.executeUpdate();
@@ -58,7 +58,7 @@ public class DBHandler {
     }
 
     // TO DELETE USER FROM USER DATABASE
-    public int delete_user(int user_id) {
+    public void delete_user(int user_id) {
 
         try {
             // CONNECT TO DATABASE
@@ -73,14 +73,11 @@ public class DBHandler {
             ps = con.prepareStatement(query_2);
             ps.executeUpdate();
 
+            System.out.println("User removed.");
             // CLOSE THE CONNECTION
             con.close();
 
-            return 0;
-
-        } catch (Exception e) {
-            return 1;
-        }
+        } catch (Exception ignored) {}
     }
 
     // FUNCTION FOR MARKING ATTENDANCE BY EMPLOYEE
@@ -172,28 +169,6 @@ public class DBHandler {
         } catch (Exception ignored) { }
     }
 
-    // THIS FUNCTION ONLY GETS THE EMPLOYEE'S NAME AND E-MAIL
-    public void get_emp_data (User user) {
-
-        try {
-            // CONNECT TO DATABASE
-            Connection con = dbc.connect();
-
-            // PREPARE AND EXECUTE SQL QUERY
-            String query = String.format("SELECT * FROM userdata WHERE uid = '%s'", user.GetUID());
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            rs.next();
-
-            // INITIALIZE EMPLOYEE DATA
-            user.SetUID(rs.getInt(1));
-            user.SetName(rs.getString(2));
-            user.SetMail(rs.getString(4));
-            user.SetUType(rs.getInt(6));
-
-        } catch (Exception ignored) { }
-    }
-
     // FUNCTION TO GET ATTENDANCE DATA OF A USER
     public int[] get_attendance (int user_id) {
 
@@ -230,25 +205,83 @@ public class DBHandler {
     }
 
     // TO GET LIST OF ALL EMPLOYEES
-    public List<String> get_emp_list () {
+    public List<Employee> get_emp_list () {
 
-        List<String> emp_list = new ArrayList<>();
+        // LIST OF EMPLOYEES
+        List<Employee> emp_list = new ArrayList<>();
 
         try {
             // CONNECT TO DATABASE
             Connection con = dbc.connect();
 
             // PREPARE AND EXECUTE SQL QUERY
-            String query = "SELECT * FROM userdata WHERE u_type = 0";
+            String query = "SELECT uid, name, email, manager FROM userdata";
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
 
             while (rs.next()) {
-                String emp_data = String.format("%d, %s, %s", rs.getInt(1), rs.getString(2), rs.getString(4));
-                emp_list.add(emp_data);
+                // INIT EMPLOYEE DATA
+                Employee employee = new Employee();
+                employee.user_id = rs.getInt(1);
+                employee.name = rs.getString(2);
+                employee.email = rs.getString(3);
+                employee.managed_by = rs.getInt(4);
+
+                // ADD EMPLOYEE DATA TO LIST
+                emp_list.add(employee);
+            }
+            return emp_list;
+
+        } catch (Exception e) {
+            System.out.println("Could not fetch employee list.");
+        }
+
+        return null;
+    }
+
+    // TO MANAGE AND UN-MANAGE EMPLOYEES
+    public void ch_manager (int emp_id, int manager) {
+
+        try {
+            // CONNECT TO DATABASE
+            Connection con = dbc.connect();
+
+            // PREPARE AND EXECUTE SQL QUERY
+            String query = String.format("UPDATE userdata SET manager = '%s' WHERE uid = '%s'", manager, emp_id);
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.executeUpdate();
+
+            System.out.println("Changed manager.");
+            // CLOSE THE CONNECTION
+            con.close();
+
+        } catch (Exception ignored) {}
+    }
+
+    // TO GET LIST OF ALL EMPLOYEES UNDER SUPERVISION
+    public List<Employee> get_emp_list (User user) {
+
+        // LIST OF EMPLOYEES
+        List<Employee> emp_list = new ArrayList<>();
+
+        try {
+            // CONNECT TO DATABASE
+            Connection con = dbc.connect();
+
+            // PREPARE AND EXECUTE SQL QUERY
+            String query = String.format("SELECT uid, name, email FROM userdata WHERE manager = %d", user.GetUID());
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+
+            while (rs.next()) {
+                // ADD EMPLOYEE DATA TO EMPLOYEE LIST
+                Employee employee = new Employee();
+                employee.user_id = rs.getInt(1);
+                employee.name = rs.getString(2);
+                employee.email = rs.getString(3);
+                emp_list.add(employee);
                 rs.next();
             }
-
             return emp_list;
 
         } catch (Exception e) {

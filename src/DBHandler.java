@@ -2,7 +2,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class DBHandler {
     // CONNECTOR TO MYSQL DATABASE
     DBConnector dbc = new DBConnector();
 
-    // Function for inserting into database
+    // FUNCTION FOR ADDING USERS INTO DATABASE
     public int adduser(User us) {
 
         try {
@@ -131,37 +130,8 @@ public class DBHandler {
 
         } catch (Exception e) {
             System.out.println("Date could not be checked");
-            return -1;}
-
-    }
-
-    // GET NEXT WORKING DAY'S DATE
-    public int get_next_date (User user) {
-        try {
-            // CONNECT TO DATABASE
-            Connection con = dbc.connect();
-
-            // TO GET TODAY'S DATE
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDateTime now = LocalDateTime.now();
-
-            // PREPARE AND EXECUTE SQL QUERY
-            String query = String.format("SELECT max(date) FROM attendance_data WHERE uid = %d", user.GetUID());
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            rs.next();
-
-            System.out.println("Last attended on: " + rs.getString(1));
-
-            // IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE TODAY
-            if (rs.getString(1).equals(dtf.format(now)))
-                return 1;
-            else
-                return 0;
-
-        } catch (Exception e) {
-            System.out.println("Date could not be checked");
-            return -1;}
+            return -1;
+        }
     }
 
     // FUNCTION TO INITIALIZE USER DATA
@@ -228,7 +198,7 @@ public class DBHandler {
             // ATTENDANCE AND TOTAL WORKING DAYS
             return attendance;
 
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {}
 
         return null;
     }
@@ -285,38 +255,5 @@ public class DBHandler {
             con.close();
 
         } catch (Exception ignored) {}
-    }
-
-    // TO GET LIST OF ALL EMPLOYEES UNDER SUPERVISION
-    public List<Employee> get_emp_list (User user) {
-
-        // LIST OF EMPLOYEES
-        List<Employee> emp_list = new ArrayList<>();
-
-        try {
-            // CONNECT TO DATABASE
-            Connection con = dbc.connect();
-
-            // PREPARE AND EXECUTE SQL QUERY
-            String query = String.format("SELECT uid, name, email FROM userdata WHERE manager = %d", user.GetUID());
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
-
-            while (rs.next()) {
-                // ADD EMPLOYEE DATA TO EMPLOYEE LIST
-                Employee employee = new Employee();
-                employee.user_id = rs.getInt(1);
-                employee.name = rs.getString(2);
-                employee.email = rs.getString(3);
-                emp_list.add(employee);
-                rs.next();
-            }
-            return emp_list;
-
-        } catch (Exception e) {
-            System.out.println("Could not fetch employee list.");
-        }
-
-        return null;
     }
 }

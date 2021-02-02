@@ -56,5 +56,4 @@ public class User {
     public int GetTotalAttendance () { return total_attendance; }
     public void SetTotalAttendance (int total_attendance) {this.total_attendance = total_attendance; }
     //endregion
-
 }

@@ -93,19 +93,5 @@ public class Predictor {
 		}
 		return dataset;
 	}
-
-	/*
-	public static void main(String... args) throws FileNotFoundException {
-		List<Instance> instances = readDataSet("D:\\WORK\\CODING\\JAVA\\Att_Calc\\dataset\\training_data.txt");
-		Predictor logistic = new Predictor(3);
-		logistic.train(instances);
-		//int[] x = {50,4,23};
-		//System.out.println("prob(1|x) = " + logistic.classify(x));
-
-		//int[] x2 = {90,1,30};
-		//System.out.println("prob(1|x2) = " + logistic.classify(x2));
-
-	}*/
-
 }
 

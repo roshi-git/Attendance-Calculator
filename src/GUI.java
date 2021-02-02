@@ -210,9 +210,7 @@ public class GUI extends JFrame {
         });
         panel.add(sign_up_b);
         // OPEN MAIN MENU WHEN MAIN MENU IS PRESSED
-        main_menu_b.addActionListener(ae -> {
-            main_menu(main_menu);
-        });
+        main_menu_b.addActionListener(ae -> main_menu(main_menu));
         panel.add(main_menu_b);
         //endregion
 

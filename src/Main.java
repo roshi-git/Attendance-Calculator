@@ -5,6 +5,5 @@ public class Main {
 
         // CONSTRUCT GUI AND RUN THE APP
         GUI g = new GUI();
-
     }
 }

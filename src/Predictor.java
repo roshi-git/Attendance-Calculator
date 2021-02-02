@@ -47,7 +47,7 @@ public class Predictor {
 		}
 	}
 
-	private double classify(int[] x) {
+	public double classify(int[] x) {
 		double logit = .0;
 		for (int i=0; i<weights.length;i++)  {
 			logit += weights[i] * x[i];
@@ -94,17 +94,18 @@ public class Predictor {
 		return dataset;
 	}
 
+	/*
 	public static void main(String... args) throws FileNotFoundException {
 		List<Instance> instances = readDataSet("D:\\WORK\\CODING\\JAVA\\Att_Calc\\dataset\\training_data.txt");
 		Predictor logistic = new Predictor(3);
 		logistic.train(instances);
-		int[] x = {50,4,23};
-		System.out.println("prob(1|x) = " + logistic.classify(x));
+		//int[] x = {50,4,23};
+		//System.out.println("prob(1|x) = " + logistic.classify(x));
 
-		int[] x2 = {90,1,30};
-		System.out.println("prob(1|x2) = " + logistic.classify(x2));
+		//int[] x2 = {90,1,30};
+		//System.out.println("prob(1|x2) = " + logistic.classify(x2));
 
-	}
+	}*/
 
 }
 

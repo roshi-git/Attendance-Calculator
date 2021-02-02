@@ -116,9 +116,9 @@ public class DBHandler {
             LocalDateTime now = LocalDateTime.now();
 
             // PREPARE AND EXECUTE SQL QUERY
-            String query_1 = String.format("SELECT max(date) FROM attendance_data WHERE uid = %d", user.GetUID());
+            String query = String.format("SELECT max(date) FROM attendance_data WHERE uid = %d", user.GetUID());
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query_1);
+            ResultSet rs = st.executeQuery(query);
             rs.next();
 
             System.out.println("Last attended on: " + rs.getString(1));
@@ -133,6 +133,35 @@ public class DBHandler {
             System.out.println("Date could not be checked");
             return -1;}
 
+    }
+
+    // GET NEXT WORKING DAY'S DATE
+    public int get_next_date (User user) {
+        try {
+            // CONNECT TO DATABASE
+            Connection con = dbc.connect();
+
+            // TO GET TODAY'S DATE
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDateTime now = LocalDateTime.now();
+
+            // PREPARE AND EXECUTE SQL QUERY
+            String query = String.format("SELECT max(date) FROM attendance_data WHERE uid = %d", user.GetUID());
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            rs.next();
+
+            System.out.println("Last attended on: " + rs.getString(1));
+
+            // IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE TODAY
+            if (rs.getString(1).equals(dtf.format(now)))
+                return 1;
+            else
+                return 0;
+
+        } catch (Exception e) {
+            System.out.println("Date could not be checked");
+            return -1;}
     }
 
     // FUNCTION TO INITIALIZE USER DATA

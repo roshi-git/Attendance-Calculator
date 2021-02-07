@@ -1,3 +1,5 @@
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -21,11 +23,14 @@ public class GUI extends JFrame {
     JPanel emp_list_menu = new JPanel();
     JPanel manage_menu = new JPanel();
     CardLayout cl = new CardLayout();
+    Font font = new Font("Segoe UI Light", Font.PLAIN, 18);
 
     // X-BOUNDS MACROS
     int x_label = 50, x_field = 200;
+    int button_w = 200, button_h = 50;
+
     // DIMENSIONS FOR FRAME
-    int width = 500, height = 600;
+    int width = 1280, height = 720;
 
     // PREDICTOR CLASS
     Predictor p = new Predictor(3);
@@ -35,6 +40,13 @@ public class GUI extends JFrame {
 
     //region GUI CONSTRUCTION
     public GUI () throws Exception {
+
+        // SET LOOK AND FEEL
+        try {
+            UIManager.setLookAndFeel( new FlatLightLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
 
         // TRAIN MODEL
         instances = Predictor.readDataSet("dataset/dataset.txt");
@@ -75,11 +87,28 @@ public class GUI extends JFrame {
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        sign_up_b.setBounds(150,100,200,50);
+        sign_up_b.setBounds(150,100, button_w, button_h);
+        sign_up_b.setVerticalAlignment(JButton.TOP);
+        sign_up_b.setHorizontalTextPosition(JButton.LEFT);
+        sign_up_b.setVerticalAlignment(JLabel.CENTER);
+        sign_up_b.setHorizontalTextPosition(JLabel.CENTER);
+        sign_up_b.setFont(font);
         panel.add(sign_up_b);
-        log_in_b.setBounds(150,200,200,50);
+
+        log_in_b.setBounds(150,200, button_w, button_h);
+        log_in_b.setVerticalAlignment(JButton.TOP);
+        log_in_b.setHorizontalTextPosition(JButton.LEFT);
+        log_in_b.setVerticalAlignment(JLabel.CENTER);
+        log_in_b.setHorizontalTextPosition(JLabel.CENTER);
+        log_in_b.setFont(font);
         panel.add(log_in_b);
-        exit_b.setBounds(150,300,200,50);
+
+        exit_b.setBounds(150,300, button_w, button_h);
+        exit_b.setVerticalAlignment(JButton.TOP);
+        exit_b.setHorizontalTextPosition(JButton.LEFT);
+        exit_b.setVerticalAlignment(JLabel.CENTER);
+        exit_b.setHorizontalTextPosition(JLabel.CENTER);
+        exit_b.setFont(font);
         panel.add(exit_b);
         //endregion
 
@@ -97,9 +126,7 @@ public class GUI extends JFrame {
             login_menu(user, ac, log_in_menu);
         });
         // EXIT WHEN Exit BUTTON IS PRESSED
-        exit_b.addActionListener(ae -> {
-            System.exit(0);
-        });
+        exit_b.addActionListener(ae -> System.exit(0));
         //endregion
 
         panel.setLayout(null);
@@ -160,10 +187,20 @@ public class GUI extends JFrame {
         re_pass_f.setBounds(x_field,350,200,25);
         panel.add(re_pass_f);
 
-        sign_up_b.setBounds(150,400,100,25);
+        sign_up_b.setBounds(150,400, button_w, button_h);
+        sign_up_b.setVerticalAlignment(JButton.TOP);
+        sign_up_b.setHorizontalTextPosition(JButton.LEFT);
+        sign_up_b.setVerticalAlignment(JLabel.CENTER);
+        sign_up_b.setHorizontalTextPosition(JLabel.CENTER);
+        sign_up_b.setFont(font);
         sign_up_b.setFocusable(false);
 
-        main_menu_b.setBounds(300,400,100,25);
+        main_menu_b.setBounds(400,400, button_w, button_h);
+        main_menu_b.setVerticalAlignment(JButton.TOP);
+        main_menu_b.setHorizontalTextPosition(JButton.LEFT);
+        main_menu_b.setVerticalAlignment(JLabel.CENTER);
+        main_menu_b.setHorizontalTextPosition(JLabel.CENTER);
+        main_menu_b.setFont(font);
         main_menu_b.setFocusable(false);
 
         messageLabel.setBounds(50,50,300,35);
@@ -244,11 +281,21 @@ public class GUI extends JFrame {
         pass_f.setBounds(x_field,150,200,25);
         panel.add(pass_f);
 
-        loginButton.setBounds(150,200,100,25);
-        loginButton.setFocusable(false);
+        loginButton.setBounds(150,200, button_w, button_h);
+        loginButton.setVerticalAlignment(JButton.TOP);
+        loginButton.setHorizontalTextPosition(JButton.LEFT);
+        loginButton.setVerticalAlignment(JLabel.CENTER);
+        loginButton.setHorizontalTextPosition(JLabel.CENTER);
+        loginButton.setFont(font);
+        panel.add(loginButton);
 
-        main_menu_b.setBounds(300,200,100,25);
-        main_menu_b.setFocusable(false);
+        main_menu_b.setBounds(400,200, button_w, button_h);
+        main_menu_b.setVerticalAlignment(JButton.TOP);
+        main_menu_b.setHorizontalTextPosition(JButton.LEFT);
+        main_menu_b.setVerticalAlignment(JLabel.CENTER);
+        main_menu_b.setHorizontalTextPosition(JLabel.CENTER);
+        main_menu_b.setFont(font);
+        panel.add(main_menu_b);
 
         messageLabel.setBounds(50,250,300,35);
         messageLabel.setFont(new Font(null,Font.BOLD,13));
@@ -277,12 +324,9 @@ public class GUI extends JFrame {
             else
                 messageLabel.setText("Incorrect username or password.");
         });
-        panel.add(loginButton);
+
         // GO TO MAIN MENU WHEN Main Menu BUTTON IS PRESSED
-        main_menu_b.addActionListener(ae -> {
-            main_menu(main_menu);
-        });
-        panel.add(main_menu_b);
+        main_menu_b.addActionListener(ae -> main_menu(main_menu));
         //endregion
 
         panel.setLayout(null);
@@ -309,16 +353,31 @@ public class GUI extends JFrame {
         attendance_count.setHorizontalAlignment(JLabel.CENTER);
         panel.add(attendance_count);
 
-        check_attendance.setBounds(200,150,150,25);
+        check_attendance.setBounds(200,200, button_w, button_h);
+        check_attendance.setVerticalAlignment(JButton.TOP);
+        check_attendance.setHorizontalTextPosition(JButton.LEFT);
+        check_attendance.setVerticalAlignment(JLabel.CENTER);
+        check_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        check_attendance.setFont(font);
         panel.add(check_attendance);
 
-        mark_attendance.setBounds(200,200,150,25);
+        mark_attendance.setBounds(200,300, button_w, button_h);
+        mark_attendance.setVerticalAlignment(JButton.TOP);
+        mark_attendance.setHorizontalTextPosition(JButton.LEFT);
+        mark_attendance.setVerticalAlignment(JLabel.CENTER);
+        mark_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        mark_attendance.setFont(font);
         panel.add(mark_attendance);
 
-        log_out.setBounds(200,300,150,25);
+        log_out.setBounds(200,400, button_w, button_h);
+        log_out.setVerticalAlignment(JButton.TOP);
+        log_out.setHorizontalTextPosition(JButton.LEFT);
+        log_out.setVerticalAlignment(JLabel.CENTER);
+        log_out.setHorizontalTextPosition(JLabel.CENTER);
+        log_out.setFont(font);
         panel.add(log_out);
 
-        logged_in_as.setBounds(100,350,300,25);
+        logged_in_as.setBounds(100,500,300,25);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
         panel.add(logged_in_as);
         //endregion
@@ -383,28 +442,63 @@ public class GUI extends JFrame {
         employee_id_f.setBounds(200,100,150,25);
         panel.add(employee_id_f);
 
-        check_attendance.setBounds(200,150,150,25);
+        check_attendance.setBounds(200,200, button_w, button_h);
+        check_attendance.setVerticalAlignment(JButton.TOP);
+        check_attendance.setHorizontalTextPosition(JButton.LEFT);
+        check_attendance.setVerticalAlignment(JLabel.CENTER);
+        check_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        check_attendance.setFont(font);
         panel.add(check_attendance);
 
-        predict_presence.setBounds(200,200,150,25);
+        predict_presence.setBounds(500,200, button_w, button_h);
+        predict_presence.setVerticalAlignment(JButton.TOP);
+        predict_presence.setHorizontalTextPosition(JButton.LEFT);
+        predict_presence.setVerticalAlignment(JLabel.CENTER);
+        predict_presence.setHorizontalTextPosition(JLabel.CENTER);
+        predict_presence.setFont(font);
         panel.add(predict_presence);
 
-        show_emp_list.setBounds(200,250,150,25);
+        show_emp_list.setBounds(200,300, button_w, button_h);
+        show_emp_list.setVerticalAlignment(JButton.TOP);
+        show_emp_list.setHorizontalTextPosition(JButton.LEFT);
+        show_emp_list.setVerticalAlignment(JLabel.CENTER);
+        show_emp_list.setHorizontalTextPosition(JLabel.CENTER);
+        show_emp_list.setFont(font);
         panel.add(show_emp_list);
 
-        manage_employee.setBounds(200,300,150,25);
+        manage_employee.setBounds(500,300, button_w, button_h);
+        manage_employee.setVerticalAlignment(JButton.TOP);
+        manage_employee.setHorizontalTextPosition(JButton.LEFT);
+        manage_employee.setVerticalAlignment(JLabel.CENTER);
+        manage_employee.setHorizontalTextPosition(JLabel.CENTER);
+        manage_employee.setFont(font);
         panel.add(manage_employee);
 
-        reval_attendance.setBounds(200, 350, 150, 25);
+        reval_attendance.setBounds(200, 400,  button_w, button_h);
+        reval_attendance.setVerticalAlignment(JButton.TOP);
+        reval_attendance.setHorizontalTextPosition(JButton.LEFT);
+        reval_attendance.setVerticalAlignment(JLabel.CENTER);
+        reval_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        reval_attendance.setFont(font);
         panel.add(reval_attendance);
 
-        mark_attendance.setBounds(200,400,150,25);
+        mark_attendance.setBounds(500,400, button_w, button_h);
+        mark_attendance.setVerticalAlignment(JButton.TOP);
+        mark_attendance.setHorizontalTextPosition(JButton.LEFT);
+        mark_attendance.setVerticalAlignment(JLabel.CENTER);
+        mark_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        mark_attendance.setFont(font);
         panel.add(mark_attendance);
 
-        log_out.setBounds(200,450,150,25);
+        log_out.setBounds(300,500, button_w, button_h);
+        log_out.setVerticalAlignment(JButton.TOP);
+        log_out.setHorizontalTextPosition(JButton.LEFT);
+        log_out.setVerticalAlignment(JLabel.CENTER);
+        log_out.setHorizontalTextPosition(JLabel.CENTER);
+        log_out.setFont(font);
         panel.add(log_out);
 
-        logged_in_as.setBounds(100,500,300,25);
+        logged_in_as.setBounds(100,600,300,25);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
         panel.add(logged_in_as);
         //endregion

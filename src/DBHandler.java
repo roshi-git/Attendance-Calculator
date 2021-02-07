@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,12 +17,18 @@ public class DBHandler {
     // FUNCTION FOR ADDING USERS INTO DATABASE
     public int adduser(User us) {
 
+        // TO GET TODAY'S DATE
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime now = LocalDateTime.now();
+
         try {
             // CONNECT TO DATABASE
             Connection con = dbc.connect();
 
             // PREPARE SQL QUERY
-            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d, %d", us.GetName(), us.GetUname(), us.GetMail(), us.GetPass(), us.GetUType(), 0);
+            String values = String.format("NULL, '%s', '%s', '%s', '%s', %d, %d, '%s'",
+                            us.GetName(), us.GetUname(), us.GetMail(),
+                            us.GetPass(), us.GetUType(), 0, dtf.format(now));
 
             PreparedStatement ps = con.prepareStatement(String.format("INSERT INTO userdata VALUES (%s)", values));
 
@@ -214,9 +221,11 @@ public class DBHandler {
             Connection con = dbc.connect();
 
             // PREPARE AND EXECUTE SQL QUERY
-            String query = "SELECT uid, name, email, manager FROM userdata";
+            String query = "SELECT uid, name, email, manager, join_date FROM userdata";
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
+
+            System.out.println("Fetched employee details.");
 
             while (rs.next()) {
                 // INIT EMPLOYEE DATA
@@ -225,6 +234,7 @@ public class DBHandler {
                 employee.name = rs.getString(2);
                 employee.email = rs.getString(3);
                 employee.managed_by = rs.getInt(4);
+                employee.join_date = rs.getString(5);
 
                 // ADD EMPLOYEE DATA TO LIST
                 emp_list.add(employee);
@@ -255,5 +265,58 @@ public class DBHandler {
             con.close();
 
         } catch (Exception ignored) {}
+    }
+
+    public int reval_attendance () {
+        // FROM JOIN DATE TILL CURRENT DATE ADD ATTENDANCE AS ABSENT (1) IN ATTENDANCE
+        // DATABASE, FOR ALL EMPLOYEES, SUCH THAT UID, DATE PAIR IS UNIQUE
+        DBHandler db = new DBHandler();
+        List<Employee> emp_list;
+
+        int new_entries_added = 0;
+
+        // TO GET TODAY'S DATE
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate now = LocalDate.now();
+
+        // GET LIST OF EMPLOYEES
+        emp_list = db.get_emp_list();
+
+        // FOR ALL EMPLOYEES, DO STUFF
+        for (Employee e: emp_list) {
+            // FROM JOIN DATE TO CURRENT DATE, MARK AS ABSENT
+            int i = 0;
+            LocalDate date = LocalDate.parse(e.join_date);
+            while (date.isBefore(now)) {
+
+                // IF NOT SUNDAY, ADD ENTRY AS ABSENT
+                if (!date.getDayOfWeek().toString().equals("SUNDAY")) {
+                    try {
+                        // CONNECT TO DATABASE
+                        Connection con = dbc.connect();
+
+                        // PREPARE AND EXECUTE SQL QUERY
+                        String values = String.format("%d, '%s', %d", e.user_id, dtf.format(date), 1);
+                        PreparedStatement ps = con.prepareStatement(String.format("INSERT INTO attendance_data VALUES (%s)", values));
+                        ps.executeUpdate();
+
+                        System.out.println("Added entry no.: " + new_entries_added);
+                        new_entries_added++;
+
+                        // CLOSE THE CONNECTION
+                        con.close();
+                    }
+                    // IF ATTENDANCE ALREADY EXISTS FOR
+                    // THAT DATE FOR A PARTICULAR USER
+                    catch (Exception ignored) {}
+                }
+
+                // INCREMENT DATE
+                i++;
+                date = date.plusDays(i);
+            }
+        }
+
+    return new_entries_added;
     }
 }

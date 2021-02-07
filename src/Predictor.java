@@ -1,12 +1,6 @@
-/**
- *
- * @author koushik
- */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -43,7 +37,9 @@ public class Predictor {
 				// not necessary for learning
 				lik += label * Math.log(classify(x)) + (1-label) * Math.log(1- classify(x));
 			}
-			System.out.println("iteration: " + n + " " + Arrays.toString(weights) + " mle: " + lik);
+
+			int training_progress = Math.round(((float)n/ITERATIONS) * 100);
+			System.out.printf("Training progress: %d%% %n", training_progress);
 		}
 	}
 
@@ -66,7 +62,7 @@ public class Predictor {
 	}
 
 	public static List<Instance> readDataSet(String file) throws FileNotFoundException {
-		List<Instance> dataset = new ArrayList<Instance>();
+		List<Instance> dataset = new ArrayList<>();
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(new File(file));
@@ -78,7 +74,7 @@ public class Predictor {
 				String[] columns = line.split("\\s+");
 
 				// skip first column and last column is the label
-				int i = 1;
+				int i;
 				int[] data = new int[columns.length-2];
 				for (i=1; i<columns.length-1; i++) {
 					data[i-1] = Integer.parseInt(columns[i]);

@@ -3,4 +3,5 @@ public class Employee {
     int managed_by;
     String name;
     String email;
+    String join_date;
 }

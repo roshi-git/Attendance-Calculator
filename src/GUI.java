@@ -37,7 +37,7 @@ public class GUI extends JFrame {
     public GUI () throws Exception {
 
         // TRAIN MODEL
-        instances = Predictor.readDataSet("D:\\WORK\\CODING\\JAVA\\Att_Calc\\dataset\\training_data.txt");
+        instances = Predictor.readDataSet("dataset/dataset.txt");
         p.train(instances);
 
         // LOAD GUI
@@ -328,6 +328,7 @@ public class GUI extends JFrame {
         log_out.addActionListener(ae -> {
             main_menu(main_menu);
         });
+
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
             db.get_user_data(user);
@@ -335,6 +336,7 @@ public class GUI extends JFrame {
             String text = String.format("Attendance: %d out of %d (%d%%)", user.GetAttendance(), user.GetTotalAttendance(), att_percentage);
             attendance_count.setText(text);
         });
+
         // MARK EMPLOYEE AS PRESENT WHEN THIS BUTTON IS PRESSED
         mark_attendance.addActionListener(ae -> {
             db.mark_attendance(user);
@@ -355,12 +357,16 @@ public class GUI extends JFrame {
         // SHOW PANEL 5 FROM THE CARD LAYOUT
         cl.show(main_panel, "5");
 
+        DBHandler db = new DBHandler();
+
         //region CREATE BUTTONS, LABELS, AND TEXT FIELDS
         JButton check_attendance = new JButton("Check Attendance");
         JButton predict_presence = new JButton("Predict Presence");
         JButton manage_employee = new JButton("Manage Employee");
         JButton show_emp_list = new JButton("Employee List");
+        JButton reval_attendance = new JButton("Revalidate Attendance");
         JButton log_out = new JButton("Log out");
+        JButton mark_attendance = new JButton("Mark Attendance");
         JTextField employee_id_f = new JTextField();
         JLabel message_label = new JLabel();
         JLabel employee_id_l = new JLabel("Employee ID:");
@@ -389,10 +395,16 @@ public class GUI extends JFrame {
         manage_employee.setBounds(200,300,150,25);
         panel.add(manage_employee);
 
-        log_out.setBounds(200,350,150,25);
+        reval_attendance.setBounds(200, 350, 150, 25);
+        panel.add(reval_attendance);
+
+        mark_attendance.setBounds(200,400,150,25);
+        panel.add(mark_attendance);
+
+        log_out.setBounds(200,450,150,25);
         panel.add(log_out);
 
-        logged_in_as.setBounds(100,400,300,25);
+        logged_in_as.setBounds(100,500,300,25);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
         panel.add(logged_in_as);
         //endregion
@@ -400,9 +412,19 @@ public class GUI extends JFrame {
         //region BUTTONS
         // LOG OUT WHEN Log out BUTTON IS PRESSED
         log_out.addActionListener(ae -> main_menu(main_menu));
+
+        // MARK EMPLOYEE AS PRESENT WHEN THIS BUTTON IS PRESSED
+        mark_attendance.addActionListener(ae -> {
+            db.mark_attendance(user);
+            mark_attendance.setEnabled(false);
+        });
+        // IF EMPLOYEE HAS ALREADY MARKED THEIR ATTENDANCE,
+        // DISABLE mark_attendance BUTTON
+        if (db.check_attendance_today(user) == 1)
+            mark_attendance.setEnabled(false);
+
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
-            DBHandler db = new DBHandler();
             int uid = Integer.parseInt(employee_id_f.getText());
 
             int[] attendance = db.get_attendance(uid);
@@ -411,59 +433,73 @@ public class GUI extends JFrame {
             String text = String.format("Attendance: %d out of %d (%d%%)", attendance[0], attendance[1], att_percentage);
             message_label.setText(text);
         });
+
         // PREDICT PRESENCE WHEN CLICKED
         predict_presence.addActionListener( ae -> {
-            DBHandler db = new DBHandler();
             int uid = Integer.parseInt(employee_id_f.getText());
 
             int[] attendance = db.get_attendance(uid);
             int att_percentage = Math.round(((float)attendance[0]/attendance[1]) * 100);
 
-            // TO GET TOMORROW'S DATE
-            LocalDate date = LocalDate.now().plusDays(1);
-            String dow = date.getDayOfWeek().toString();
-            int dom = date.getDayOfMonth();
-
-            // TO GET DAY NUMBER
-            int dow_number;
-            switch (dow) {
-                case ("MONDAY") -> dow_number = 1;
-                case ("TUESDAY") -> dow_number = 2;
-                case ("WEDNESDAY") -> dow_number = 3;
-                case ("THURSDAY") -> dow_number = 4;
-                case ("FRIDAY") -> dow_number = 5;
-                case ("SATURDAY") -> dow_number = 6;
-                default -> dow_number = 7;
+            if (att_percentage == 0) {
+                message_label.setText("Can not predict as attendance is 0%");
             }
-
-            if (dow_number == 7)
-                System.out.println("Sunday no work.");
             else {
-                // CREATE SAMPLE FOR PREDICTION
-                int[] x = {att_percentage, dow_number, dom};
+                // TO GET TOMORROW'S DATE
+                LocalDate date = LocalDate.now().plusDays(3);
+                String dow = date.getDayOfWeek().toString();
+                int dom = date.getDayOfMonth();
 
-                // CALL PREDICTION FUNCTION
-                double prob = 1 - p.classify(x);
-
-                // DISPLAY PREDICTION
-                String att_status;
-                if (prob < 0.5) {
-                    att_status = "ABSENT";
-                    prob = 1 - prob;
+                // TO GET DAY NUMBER
+                int dow_number;
+                switch (dow) {
+                    case ("MONDAY") -> dow_number = 1;
+                    case ("TUESDAY") -> dow_number = 2;
+                    case ("WEDNESDAY") -> dow_number = 3;
+                    case ("THURSDAY") -> dow_number = 4;
+                    case ("FRIDAY") -> dow_number = 5;
+                    case ("SATURDAY") -> dow_number = 6;
+                    default -> dow_number = 7;
                 }
-                else if (prob > 0.5)
-                    att_status = "PRESENT";
-                else
-                    att_status = "UNCERTAIN";
 
-                int att_prob_percent = (int)(prob * 100);
-                message_label.setText(String.format("Attendance next working day is - %s (%d%% likely)", att_status, att_prob_percent));
+                if (dow_number == 7) {
+                    message_label.setText("Sunday no work.");
+                }
+                else {
+                    // CREATE SAMPLE FOR PREDICTION
+                    int[] x = {att_percentage, dow_number, dom};
+
+                    // CALL PREDICTION FUNCTION
+                    double prob = p.classify(x);
+
+                    // DISPLAY PREDICTION
+                    String att_status;
+                    if (prob < 0.5) {
+                        att_status = "ABSENT";
+                        prob = 1 - prob;
+                    }
+                    else if (prob > 0.5)
+                        att_status = "PRESENT";
+                    else
+                        att_status = "UNCERTAIN";
+
+                    int att_prob_percent = (int)(prob * 100);
+                    message_label.setText(String.format("Attendance next working day is - %s (%d%% likely)", att_status, att_prob_percent));
+                }
             }
         });
+
         // SHOW EMPLOYEE LIST WHEN CLICKED
         show_emp_list.addActionListener(ae -> emp_list_menu(user, emp_list_menu));
+
         // REMOVE EMPLOYEE WHEN CLICKED
         manage_employee.addActionListener(ae -> manage_menu(user, manage_menu));
+
+        // RE-VALIDATE ATTENDANCE WHEN CLICKED
+        reval_attendance.addActionListener(ae -> {
+            int new_entries_added = db.reval_attendance();
+            message_label.setText(String.format("Revalidated attendance (%d new entries).", new_entries_added));
+        });
         //endregion
 
         panel.setLayout(null);

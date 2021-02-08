@@ -1,6 +1,7 @@
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
@@ -24,13 +25,14 @@ public class GUI extends JFrame {
     JPanel manage_menu = new JPanel();
     CardLayout cl = new CardLayout();
     Font font = new Font("Segoe UI Light", Font.PLAIN, 18);
+    Font banner_f = new Font("Segoe UI", Font.PLAIN, 32);
 
     // X-BOUNDS MACROS
-    int x_label = 50, x_field = 200;
+    int x_label = 50, x_field = 250;
     int button_w = 200, button_h = 50;
 
     // DIMENSIONS FOR FRAME
-    int width = 1280, height = 720;
+    int width = 800, height = 600;
 
     // PREDICTOR CLASS
     Predictor p = new Predictor(3);
@@ -84,30 +86,23 @@ public class GUI extends JFrame {
         JButton sign_up_b = new JButton("Sign-up");
         JButton log_in_b = new JButton("Log-in");
         JButton exit_b = new JButton("Exit");
+        JLabel banner = new JLabel("Employee Management App");
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        sign_up_b.setBounds(150,100, button_w, button_h);
-        sign_up_b.setVerticalAlignment(JButton.TOP);
-        sign_up_b.setHorizontalTextPosition(JButton.LEFT);
-        sign_up_b.setVerticalAlignment(JLabel.CENTER);
-        sign_up_b.setHorizontalTextPosition(JLabel.CENTER);
+        banner.setBounds(200,100, 450, 50);
+        banner.setFont(banner_f);
+        panel.add(banner);
+
+        sign_up_b.setBounds(300,200, button_w, button_h);
         sign_up_b.setFont(font);
         panel.add(sign_up_b);
 
-        log_in_b.setBounds(150,200, button_w, button_h);
-        log_in_b.setVerticalAlignment(JButton.TOP);
-        log_in_b.setHorizontalTextPosition(JButton.LEFT);
-        log_in_b.setVerticalAlignment(JLabel.CENTER);
-        log_in_b.setHorizontalTextPosition(JLabel.CENTER);
+        log_in_b.setBounds(300,300, button_w, button_h);
         log_in_b.setFont(font);
         panel.add(log_in_b);
 
-        exit_b.setBounds(150,300, button_w, button_h);
-        exit_b.setVerticalAlignment(JButton.TOP);
-        exit_b.setHorizontalTextPosition(JButton.LEFT);
-        exit_b.setVerticalAlignment(JLabel.CENTER);
-        exit_b.setHorizontalTextPosition(JLabel.CENTER);
+        exit_b.setBounds(300,400, button_w, button_h);
         exit_b.setFont(font);
         panel.add(exit_b);
         //endregion
@@ -157,51 +152,54 @@ public class GUI extends JFrame {
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        name_l.setBounds(x_label,100,75,25);
+        name_l.setBounds(x_label,100,100,30);
+        name_l.setFont(font);
         panel.add(name_l);
-        name_f.setBounds(x_field,100,200,25);
+        name_f.setBounds(x_field,100,400,30);
+        name_f.setFont(font);
         panel.add(name_f);
 
-        email_l.setBounds(x_label,150,75,25);
+        email_l.setBounds(x_label,150,100,30);
+        email_l.setFont(font);
         panel.add(email_l);
-        email_f.setBounds(x_field,150,200,25);
+        email_f.setBounds(x_field,150,400,30);
+        email_f.setFont(font);
         panel.add(email_f);
 
-        username_l.setBounds(x_label,200,75,25);
+        username_l.setBounds(x_label,200,100,30);
+        username_l.setFont(font);
         panel.add(username_l);
-        username_f.setBounds(x_field,200,200,25);
+        username_f.setBounds(x_field,200,400,30);
+        username_f.setFont(font);
         panel.add(username_f);
 
-        user_type_l.setBounds(x_label,250,200,25);
+        user_type_l.setBounds(x_label,250,200,30);
+        user_type_l.setFont(font);
         panel.add(user_type_l);
-        user_type.setBounds(x_field,250,75,25);
+        user_type.setBounds(x_field,250,75,30);
         panel.add(user_type);
 
-        pass_l.setBounds(x_label,300,75,25);
+        pass_l.setBounds(x_label,300,100,30);
+        pass_l.setFont(font);
         panel.add(pass_l);
-        pass_f.setBounds(x_field,300,200,25);
+        pass_f.setBounds(x_field,300,400,30);
+        pass_f.setFont(font);
         panel.add(pass_f);
 
-        re_pass_l.setBounds(x_label,350,150,25);
+        re_pass_l.setBounds(x_label,350,150,30);
+        re_pass_l.setFont(font);
         panel.add(re_pass_l);
-        re_pass_f.setBounds(x_field,350,200,25);
+        re_pass_f.setBounds(x_field,350,400,30);
+        re_pass_f.setFont(font);
         panel.add(re_pass_f);
 
-        sign_up_b.setBounds(150,400, button_w, button_h);
-        sign_up_b.setVerticalAlignment(JButton.TOP);
-        sign_up_b.setHorizontalTextPosition(JButton.LEFT);
-        sign_up_b.setVerticalAlignment(JLabel.CENTER);
-        sign_up_b.setHorizontalTextPosition(JLabel.CENTER);
+        sign_up_b.setBounds(150,450, button_w, button_h);
         sign_up_b.setFont(font);
-        sign_up_b.setFocusable(false);
+        panel.add(sign_up_b);
 
-        main_menu_b.setBounds(400,400, button_w, button_h);
-        main_menu_b.setVerticalAlignment(JButton.TOP);
-        main_menu_b.setHorizontalTextPosition(JButton.LEFT);
-        main_menu_b.setVerticalAlignment(JLabel.CENTER);
-        main_menu_b.setHorizontalTextPosition(JLabel.CENTER);
+        main_menu_b.setBounds(450,450, button_w, button_h);
         main_menu_b.setFont(font);
-        main_menu_b.setFocusable(false);
+        panel.add(main_menu_b);
 
         messageLabel.setBounds(50,50,300,35);
         messageLabel.setFont(new Font(null,Font.BOLD,12));
@@ -245,10 +243,9 @@ public class GUI extends JFrame {
                 }
             }
         });
-        panel.add(sign_up_b);
+
         // OPEN MAIN MENU WHEN MAIN MENU IS PRESSED
         main_menu_b.addActionListener(ae -> main_menu(main_menu));
-        panel.add(main_menu_b);
         //endregion
 
         panel.setLayout(null);
@@ -271,34 +268,30 @@ public class GUI extends JFrame {
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        username_l.setBounds(x_label,100,75,25);
+        username_l.setBounds(x_label,200,100,30);
+        username_l.setFont(font);
         panel.add(username_l);
-        username_f.setBounds(x_field,100,200,25);
+        username_f.setBounds(x_field,200,400,30);
+        username_f.setFont(font);
         panel.add(username_f);
 
-        pass_l.setBounds(x_label,150,75,25);
+        pass_l.setBounds(x_label,250,100,30);
+        pass_l.setFont(font);
         panel.add(pass_l);
-        pass_f.setBounds(x_field,150,200,25);
+        pass_f.setBounds(x_field,250,400,30);
+        pass_f.setFont(font);
         panel.add(pass_f);
 
-        loginButton.setBounds(150,200, button_w, button_h);
-        loginButton.setVerticalAlignment(JButton.TOP);
-        loginButton.setHorizontalTextPosition(JButton.LEFT);
-        loginButton.setVerticalAlignment(JLabel.CENTER);
-        loginButton.setHorizontalTextPosition(JLabel.CENTER);
+        loginButton.setBounds(x_field,330, button_w, button_h);
         loginButton.setFont(font);
         panel.add(loginButton);
 
-        main_menu_b.setBounds(400,200, button_w, button_h);
-        main_menu_b.setVerticalAlignment(JButton.TOP);
-        main_menu_b.setHorizontalTextPosition(JButton.LEFT);
-        main_menu_b.setVerticalAlignment(JLabel.CENTER);
-        main_menu_b.setHorizontalTextPosition(JLabel.CENTER);
+        main_menu_b.setBounds(x_field + 250,330, button_w, button_h);
         main_menu_b.setFont(font);
         panel.add(main_menu_b);
 
-        messageLabel.setBounds(50,250,300,35);
-        messageLabel.setFont(new Font(null,Font.BOLD,13));
+        messageLabel.setBounds(x_field,100,400,30);
+        messageLabel.setFont(font);
         panel.add(messageLabel);
         //endregion
 
@@ -349,44 +342,32 @@ public class GUI extends JFrame {
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        attendance_count.setBounds(100,100,300,25);
+        attendance_count.setBounds(200,100,400,30);
         attendance_count.setHorizontalAlignment(JLabel.CENTER);
+        attendance_count.setFont(font);
         panel.add(attendance_count);
 
-        check_attendance.setBounds(200,200, button_w, button_h);
-        check_attendance.setVerticalAlignment(JButton.TOP);
-        check_attendance.setHorizontalTextPosition(JButton.LEFT);
-        check_attendance.setVerticalAlignment(JLabel.CENTER);
-        check_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        check_attendance.setBounds(300,200, button_w, button_h);
         check_attendance.setFont(font);
         panel.add(check_attendance);
 
-        mark_attendance.setBounds(200,300, button_w, button_h);
-        mark_attendance.setVerticalAlignment(JButton.TOP);
-        mark_attendance.setHorizontalTextPosition(JButton.LEFT);
-        mark_attendance.setVerticalAlignment(JLabel.CENTER);
-        mark_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        mark_attendance.setBounds(300,300, button_w, button_h);
         mark_attendance.setFont(font);
         panel.add(mark_attendance);
 
-        log_out.setBounds(200,400, button_w, button_h);
-        log_out.setVerticalAlignment(JButton.TOP);
-        log_out.setHorizontalTextPosition(JButton.LEFT);
-        log_out.setVerticalAlignment(JLabel.CENTER);
-        log_out.setHorizontalTextPosition(JLabel.CENTER);
+        log_out.setBounds(300,400, button_w, button_h);
         log_out.setFont(font);
         panel.add(log_out);
 
-        logged_in_as.setBounds(100,500,300,25);
+        logged_in_as.setBounds(300,500,300,30);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
+        logged_in_as.setFont(font);
         panel.add(logged_in_as);
         //endregion
 
         //region BUTTONS
         // LOG OUT WHEN Log out BUTTON IS PRESSED
-        log_out.addActionListener(ae -> {
-            main_menu(main_menu);
-        });
+        log_out.addActionListener(ae -> main_menu(main_menu));
 
         // SHOW ATTENDANCE AND ATTENDANCE PERCENTAGE WHEN CLICKED
         check_attendance.addActionListener(ae -> {
@@ -433,73 +414,49 @@ public class GUI extends JFrame {
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        message_label.setBounds(50,50,400,25);
+        message_label.setBounds(200,50,500,30);
         message_label.setHorizontalAlignment(JLabel.CENTER);
+        message_label.setFont(font);
         panel.add(message_label);
 
-        employee_id_l.setBounds(100,100,100,25);
+        employee_id_l.setBounds(80,120,100,30);
+        employee_id_l.setFont(font);
         panel.add(employee_id_l);
-        employee_id_f.setBounds(200,100,150,25);
+        employee_id_f.setBounds(180,120,200,30);
+        employee_id_f.setFont(font);
         panel.add(employee_id_f);
 
-        check_attendance.setBounds(200,200, button_w, button_h);
-        check_attendance.setVerticalAlignment(JButton.TOP);
-        check_attendance.setHorizontalTextPosition(JButton.LEFT);
-        check_attendance.setVerticalAlignment(JLabel.CENTER);
-        check_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        check_attendance.setBounds(180,180, button_w, button_h);
         check_attendance.setFont(font);
         panel.add(check_attendance);
 
-        predict_presence.setBounds(500,200, button_w, button_h);
-        predict_presence.setVerticalAlignment(JButton.TOP);
-        predict_presence.setHorizontalTextPosition(JButton.LEFT);
-        predict_presence.setVerticalAlignment(JLabel.CENTER);
-        predict_presence.setHorizontalTextPosition(JLabel.CENTER);
+        predict_presence.setBounds(420,180, button_w, button_h);
         predict_presence.setFont(font);
         panel.add(predict_presence);
 
-        show_emp_list.setBounds(200,300, button_w, button_h);
-        show_emp_list.setVerticalAlignment(JButton.TOP);
-        show_emp_list.setHorizontalTextPosition(JButton.LEFT);
-        show_emp_list.setVerticalAlignment(JLabel.CENTER);
-        show_emp_list.setHorizontalTextPosition(JLabel.CENTER);
+        show_emp_list.setBounds(180,260, button_w, button_h);
         show_emp_list.setFont(font);
         panel.add(show_emp_list);
 
-        manage_employee.setBounds(500,300, button_w, button_h);
-        manage_employee.setVerticalAlignment(JButton.TOP);
-        manage_employee.setHorizontalTextPosition(JButton.LEFT);
-        manage_employee.setVerticalAlignment(JLabel.CENTER);
-        manage_employee.setHorizontalTextPosition(JLabel.CENTER);
+        manage_employee.setBounds(420,260, button_w, button_h);
         manage_employee.setFont(font);
         panel.add(manage_employee);
 
-        reval_attendance.setBounds(200, 400,  button_w, button_h);
-        reval_attendance.setVerticalAlignment(JButton.TOP);
-        reval_attendance.setHorizontalTextPosition(JButton.LEFT);
-        reval_attendance.setVerticalAlignment(JLabel.CENTER);
-        reval_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        reval_attendance.setBounds(180, 340,  button_w, button_h);
         reval_attendance.setFont(font);
         panel.add(reval_attendance);
 
-        mark_attendance.setBounds(500,400, button_w, button_h);
-        mark_attendance.setVerticalAlignment(JButton.TOP);
-        mark_attendance.setHorizontalTextPosition(JButton.LEFT);
-        mark_attendance.setVerticalAlignment(JLabel.CENTER);
-        mark_attendance.setHorizontalTextPosition(JLabel.CENTER);
+        mark_attendance.setBounds(420,340, button_w, button_h);
         mark_attendance.setFont(font);
         panel.add(mark_attendance);
 
-        log_out.setBounds(300,500, button_w, button_h);
-        log_out.setVerticalAlignment(JButton.TOP);
-        log_out.setHorizontalTextPosition(JButton.LEFT);
-        log_out.setVerticalAlignment(JLabel.CENTER);
-        log_out.setHorizontalTextPosition(JLabel.CENTER);
+        log_out.setBounds(180,420, button_w, 30);
         log_out.setFont(font);
         panel.add(log_out);
 
-        logged_in_as.setBounds(100,600,300,25);
+        logged_in_as.setBounds(300,500,200,30);
         logged_in_as.setText(String.format("Logged in as: %s", user.GetName()));
+        logged_in_as.setFont(font);
         panel.add(logged_in_as);
         //endregion
 
@@ -621,27 +578,35 @@ public class GUI extends JFrame {
         tableModel.addColumn("Managed By");
         tableModel.addColumn("Name");
         tableModel.addColumn("E-mail ID");
+        tableModel.addColumn("Join Date");
 
         // ADD ROWS TO TABLE VIEW OF EMPLOYEE DATA
         for (Employee emp : emp_list) {
             String[] emp_data = {Integer.toString(emp.user_id),
                                 Integer.toString(emp.managed_by),
-                                emp.name, emp.email};
+                                emp.name, emp.email, emp.join_date};
 
             tableModel.insertRow(0, emp_data);
         }
 
         // RESIZE, ORIENT, AND ADD TABLE TO SUB-PANEL
-        table.setPreferredScrollableViewportSize(new Dimension(400, 250));
-        table.setBounds(50, 0, 400, 250);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+
+        table.setPreferredScrollableViewportSize(new Dimension(600, 400));
+        table.setFont(new Font("Segoe UI Light", Font.PLAIN, 14));
+        table.setBounds(0, 0, 600, 400);
         sub_panel.add(new JScrollPane(table));
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        back.setBounds(200,350,100,25);
+        back.setBounds(300,500,200,30);
+        back.setFont(font);
         panel.add(back);
 
-        sub_panel.setBounds(0, 0, 500, 300);
+        sub_panel.setBounds(100, 50, 600, 400);
         panel.add(sub_panel);
         //endregion
 
@@ -688,28 +653,39 @@ public class GUI extends JFrame {
         }
 
         // RESIZE, ORIENT, AND ADD TABLE TO SUB-PANEL
-        table.setPreferredScrollableViewportSize(new Dimension(400, 250));
-        table.setBounds(50, 0, 400, 250);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+
+        table.setPreferredScrollableViewportSize(new Dimension(600, 250));
+        table.setFont(new Font("Segoe UI Light", Font.PLAIN, 14));
+        table.setBounds(0, 0, 600, 280);
         sub_panel.add(new JScrollPane(table));
         //endregion
 
         //region ORIENTATION AND RESIZING, AND ADDING OF ITEMS TO FRAME
-        sub_panel.setBounds(0, 0, 500, 300);
+        sub_panel.setBounds(100, 20, 600, 280);
         panel.add(sub_panel);
 
-        manage.setBounds(100,300,150,25);
+        manage.setBounds(180,330, button_w, button_h);
+        manage.setFont(font);
         panel.add(manage);
 
-        un_manage.setBounds(300,300,150,25);
+        un_manage.setBounds(420,330, button_w, button_h);
+        un_manage.setFont(font);
         panel.add(un_manage);
 
-        remove.setBounds(200,350,150,25);
+        remove.setBounds(180,410, button_w, button_h);
+        remove.setFont(font);
         panel.add(remove);
 
-        back.setBounds(200,400,150,25);
+        back.setBounds(420,410, button_w, button_h);
+        back.setFont(font);
         panel.add(back);
 
-        message_label.setBounds(200,450,150,25);
+        message_label.setBounds(300,500,200,30);
+        message_label.setFont(font);
         panel.add(message_label);
         //endregion
 
@@ -719,6 +695,7 @@ public class GUI extends JFrame {
 
             int emp_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
             int manager_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 1).toString());
+            String emp_name = tableModel.getValueAt(table.getSelectedRow(), 2).toString();
 
             // IF EMPLOYEE IS BEING MANAGED ALREADY
             if (manager_id != 0)
@@ -730,7 +707,7 @@ public class GUI extends JFrame {
                 else {
                     db.ch_manager(emp_id, user.GetUID());
                     tableModel.setValueAt(user.GetUID(), table.getSelectedRow(), 1);
-                    message_label.setText("Success");
+                    message_label.setText(String.format("Managing: %s", emp_name));
                 }
             }
         });
@@ -740,6 +717,7 @@ public class GUI extends JFrame {
 
             int emp_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
             int manager_id = Integer.parseInt(tableModel.getValueAt(table.getSelectedRow(), 1).toString());
+            String emp_name = tableModel.getValueAt(table.getSelectedRow(), 2).toString();
 
             // IF EMPLOYEE IS BEING MANAGED ALREADY
             if (manager_id != 0) {
@@ -747,7 +725,7 @@ public class GUI extends JFrame {
                 if (manager_id == user.GetUID()) {
                     db.ch_manager(emp_id, 0);
                     tableModel.setValueAt(0, table.getSelectedRow(), 1);
-                    message_label.setText("Success");
+                    message_label.setText(String.format("Un-managed: %s", emp_name));
                 }
                 else
                     message_label.setText("Invalid operation!");
@@ -793,7 +771,6 @@ public class GUI extends JFrame {
         //endregion
 
         panel.setLayout(null);
-
     }
 
     //endregion

@@ -1,15 +1,11 @@
-import java.util.Scanner;
-
 // THIS CLASS HANDLES CRUD OPERATIONS ON ACCOUNTS IN THE DATABASE
 public class AccountHandler {
-
-    Scanner sc = new Scanner(System.in);
 
     // THIS FUNCTION HANDLES THE SIGN-UP PROCESS
     public int signup(User user) {
 
         DBHandler db = new DBHandler();
-        int exists = 1;
+        int exists;
         String query;
 
         // CHECK FOR E-MAIL IF ALREADY BEING USED

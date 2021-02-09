@@ -4,6 +4,7 @@ The Employee Management App is an application that can manage employee accounts 
 This app is designed for mainly two types of users, namely -
 1. Employee
 2. Employee Manager
+
 Employees can only create their own accounts and mark themselves as present once per day after logging in.
 Employee Managers have much more functionalities available to them than an Employee. The list of additional functionalities are as follows -
 1. Check Employee attendance
